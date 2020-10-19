@@ -204,7 +204,7 @@ class _BuildFormState extends State<BuildForm> {
                   child: TextFormField(
                     validator: (String value) {
                       if (value.isEmpty) {
-                        return "Error must not be empty";
+                        return "Plot size must not be empty";
                       }
 
                       return null;

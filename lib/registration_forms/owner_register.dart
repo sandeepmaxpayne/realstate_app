@@ -291,7 +291,7 @@ class _BuildFormState extends State<BuildForm> {
                   child: TextFormField(
                     validator: (String value) {
                       if (value.isEmpty) {
-                        return "Error must not be empty";
+                        return "Place must not be empty";
                       }
                       return null;
                     },
@@ -325,7 +325,7 @@ class _BuildFormState extends State<BuildForm> {
                   child: TextFormField(
                     validator: (String value) {
                       if (value.isEmpty) {
-                        return "Error must not be empty";
+                        return "Area must not be empty";
                       }
                       return null;
                     },
@@ -343,7 +343,7 @@ class _BuildFormState extends State<BuildForm> {
                   child: TextFormField(
                     validator: (String value) {
                       if (value.isEmpty) {
-                        return "Error must not be empty";
+                        return "Price must not be empty";
                       }
                       return null;
                     },
@@ -362,7 +362,7 @@ class _BuildFormState extends State<BuildForm> {
                     maxLines: 3,
                     validator: (String value) {
                       if (value.isEmpty) {
-                        return "Error must not be empty";
+                        return "Amenities Field must not be empty";
                       }
 
                       return null;
