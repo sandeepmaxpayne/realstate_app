@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:real_estate/card_view.dart';
+import 'package:real_estate/registration_forms/buyer_register.dart';
+import 'package:real_estate/registration_forms/owner_register.dart';
+import 'package:real_estate/registration_forms/realtor_register.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -154,25 +157,25 @@ class _HomeState extends State<Home> {
                 style: TextStyle(fontSize: 25.0, fontWeight: FontWeight.w600)),
           ),
           ChatCard(
-            onPress: () {},
+            onPress: () {
+              Navigator.pushNamed(context, OwnerRegister.id);
+            },
             title1: 'Owner',
             title2: 'Owner of the products',
             desc: 'short descp',
           ),
           ChatCard(
-            onPress: () {},
+            onPress: () {
+              Navigator.pushNamed(context, RealtorRegister.id);
+            },
             title1: 'Realtor',
             title2: 'short title',
             desc: 'short descp',
           ),
           ChatCard(
-            onPress: () {},
-            title1: 'Admin Employee',
-            title2: 'Admin Employee Registration',
-            desc: 'none',
-          ),
-          ChatCard(
-            onPress: () {},
+            onPress: () {
+              Navigator.pushNamed(context, BuyerRegister.id);
+            },
             title1: 'Buyer',
             title2: 'buyer',
             desc: 'none',

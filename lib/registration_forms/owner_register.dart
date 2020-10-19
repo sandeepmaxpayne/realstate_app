@@ -72,6 +72,7 @@ class _BuildFormState extends State<BuildForm> {
   TextEditingController ownerImageController = TextEditingController();
   TextEditingController optionController = TextEditingController();
 
+  int uploadNo = 0;
   Future filePicker(BuildContext context) async {
     try {
       if (fileType == 'others') {
@@ -85,6 +86,9 @@ class _BuildFormState extends State<BuildForm> {
         });
         print('file name: $fileName');
         //  _uploadFile(file, fileName);
+        if (uploadNo == 2) {
+          _uploadOptionalDocument(file, fileName);
+        }
       }
     } on PlatformException catch (e) {
       snackBarMessage('Unsupported Exception: $e', Colors.red);
@@ -96,12 +100,26 @@ class _BuildFormState extends State<BuildForm> {
 
     if (fileType == 'others') {
       storageReference =
-          FirebaseStorage.instance.ref().child('owner/id/$fileName');
+          FirebaseStorage.instance.ref().child('owner/image/$fileName');
     }
     final StorageUploadTask uploadTask = storageReference.putFile(file);
     final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
     final String url = (await downloadUrl.ref.getDownloadURL());
     print("URL is $url");
+    ownerImageController.text = url;
+  }
+
+  Future<void> _uploadOptionalDocument(File file, String fileName) async {
+    StorageReference storageReference;
+
+    if (fileType == 'others') {
+      storageReference =
+          FirebaseStorage.instance.ref().child('owner/document/$fileName');
+    }
+    final StorageUploadTask uploadTask = storageReference.putFile(file);
+    final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
+    final String url = (await downloadUrl.ref.getDownloadURL());
+    print("Optional Url is $url");
     ownerImageController.text = url;
   }
 
@@ -165,7 +183,97 @@ class _BuildFormState extends State<BuildForm> {
                   child: TextFormField(
                     validator: (String value) {
                       if (value.isEmpty) {
-                        return "Error must not be empty";
+                        return "Name must not be empty";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        hintText: 'Name',
+                        labelText: 'Name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(2.0),
+                        )),
+                    keyboardType: TextInputType.text,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    validator: (String value) {
+                      if (value.isEmpty) {
+                        return "Contact Number must not be empty";
+                      } else if (value.length != 10) {
+                        return "Please enter 10 digit contact number";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        hintText: 'Contact Number',
+                        labelText: 'Contact Number',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(2.0),
+                        )),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    validator: (String value) {
+                      if (value.isEmpty) {
+                        return "Email must not be empty";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        hintText: 'Mail ID',
+                        labelText: 'Mail ID',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(2.0),
+                        )),
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: ListTile(
+                          title: Text(
+                            'Upload Document (Optional)',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                          trailing: Icon(Icons.attach_file),
+                          onTap: () {
+                            setState(() {
+                              uploadNo = 2;
+                              fileType = 'others';
+                            });
+                            filePicker(context);
+                          },
+                        ),
+                      ),
+                      Flexible(
+                        child: TextFormField(
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            hintText: fileName,
+                          ),
+                          readOnly: true,
+                          showCursor: false,
+                        ),
+                      )
+                    ],
+                  ),
+                ),
+
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    validator: (String value) {
+                      if (value.isEmpty) {
+                        return "location must not be empty";
                       }
                       return null;
                     },
