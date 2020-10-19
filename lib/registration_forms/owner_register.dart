@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:real_estate/values/styles.dart';
 
 class OwnerRegister extends StatelessWidget {
   static const id = 'OwnerReg';
@@ -59,9 +60,8 @@ class _BuildFormState extends State<BuildForm> {
   }
 
   bool progress = false;
-  int tag = 1;
-  File _imageFile;
 
+  int tag = 1;
   List<String> options = ['Plot', 'Apartment', 'Ind.house'];
 
   String fileType = '';
@@ -70,6 +70,7 @@ class _BuildFormState extends State<BuildForm> {
   File file;
   bool isUploaded = true;
   TextEditingController ownerImageController = TextEditingController();
+  TextEditingController optionController = TextEditingController();
 
   Future filePicker(BuildContext context) async {
     try {
@@ -106,6 +107,7 @@ class _BuildFormState extends State<BuildForm> {
 
   @override
   Widget build(BuildContext context) {
+    optionController.text = options[tag];
     return Scaffold(
       key: _scaffoldKey,
       body: ModalProgressHUD(
@@ -200,7 +202,8 @@ class _BuildFormState extends State<BuildForm> {
                     value: tag,
                     onChanged: (val) => setState(() {
                       tag = val;
-                      print(options[tag]);
+                      optionController.text = options[tag];
+                      //print(options[tag]);
                     }),
                     choiceItems: C2Choice.listFrom<int, String>(
                       source: options,
@@ -267,7 +270,7 @@ class _BuildFormState extends State<BuildForm> {
                 ),
 
                 RaisedButton(
-                  color: Color(0xFFFFE97D),
+                  color: Theme.of(context).accentColor,
                   onPressed: () {
                     if (widget._formKey.currentState.validate()) {
                       setState(() {
@@ -276,7 +279,11 @@ class _BuildFormState extends State<BuildForm> {
                       _uploadFile(file, fileName);
                     }
                   },
-                  child: Text('Submit'),
+                  child: Text(
+                    'Submit',
+                    style: Styles.customTextStyle2(
+                        color: Colors.black87, fontWeight: FontWeight.w600),
+                  ),
                 ),
               ],
             ),

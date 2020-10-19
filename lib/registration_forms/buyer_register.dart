@@ -1,15 +1,13 @@
 import 'dart:io';
 
 import 'package:chips_choice/chips_choice.dart';
-import 'package:file_picker/file_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:path/path.dart' as p;
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:real_estate/values/styles.dart';
 
 class BuyerRegister extends StatelessWidget {
-  static const id = 'OwnerReg';
+  static const id = 'BuyerReg';
 
   final formKey = GlobalKey<FormState>();
   @override
@@ -18,7 +16,7 @@ class BuyerRegister extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
         title: Text(
-          'Owner Registration',
+          'Buyer Registration',
           style: TextStyle(color: Colors.black),
         ),
         centerTitle: true,
@@ -59,53 +57,28 @@ class _BuildFormState extends State<BuildForm> {
   }
 
   bool progress = false;
-  int tag = 1;
-  File _imageFile;
 
+  int optionTag = 1;
+  int buyerTag = 0;
   List<String> options = ['Plot', 'Apartment', 'Ind.house'];
+  List<String> buyerType = ['Individual Buying', 'Group Buying'];
 
   String fileType = '';
   String fileName = '';
   String operationText = '';
   File file;
   bool isUploaded = true;
-  TextEditingController ownerImageController = TextEditingController();
-
-  Future filePicker(BuildContext context) async {
-    try {
-      if (fileType == 'others') {
-        file = await FilePicker.getFile(
-          type: FileType.any,
-        );
-
-        fileName = p.basename(file.path);
-        setState(() {
-          fileName = p.basename(file.path);
-        });
-        print('file name: $fileName');
-        //  _uploadFile(file, fileName);
-      }
-    } on PlatformException catch (e) {
-      snackBarMessage('Unsupported Exception: $e', Colors.red);
-    }
-  }
-
-  Future<void> _uploadFile(File file, String fileName) async {
-    StorageReference storageReference;
-
-    if (fileType == 'others') {
-      storageReference =
-          FirebaseStorage.instance.ref().child('buyer/id/$fileName');
-    }
-    final StorageUploadTask uploadTask = storageReference.putFile(file);
-    final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
-    final String url = (await downloadUrl.ref.getDownloadURL());
-    print("URL is $url");
-    ownerImageController.text = url;
-  }
+  var selectedRange = RangeValues(500, 1000);
+  TextEditingController startBudgetController = TextEditingController();
+  TextEditingController endBudgetController = TextEditingController();
+  TextEditingController optionController = TextEditingController();
+  TextEditingController buyerTypeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    optionController.text = options[optionTag];
+    buyerTypeController.text = buyerType[buyerTag];
+
     return Scaffold(
       key: _scaffoldKey,
       body: ModalProgressHUD(
@@ -118,46 +91,6 @@ class _BuildFormState extends State<BuildForm> {
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
-                //upload image
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Flexible(
-                        child: ListTile(
-                          title: Text(
-                            'Upload Image',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                          trailing: Icon(Icons.file_upload),
-                          onTap: () {
-                            setState(() {
-                              fileType = 'others';
-                            });
-                            filePicker(context);
-                          },
-                        ),
-                      ),
-                      Flexible(
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            hintText: fileName,
-                          ),
-                          readOnly: true,
-                          showCursor: false,
-                          validator: (String value) {
-                            value = fileName;
-                            if (value.isEmpty) {
-                              return "!Upload Image";
-                            }
-                            return null;
-                          },
-                        ),
-                      )
-                    ],
-                  ),
-                ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
@@ -168,7 +101,63 @@ class _BuildFormState extends State<BuildForm> {
                       return null;
                     },
                     decoration: InputDecoration(
-                        hintText: 'location',
+                        hintText: 'Name',
+                        labelText: 'Name',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(2.0),
+                        )),
+                    keyboardType: TextInputType.text,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    validator: (String value) {
+                      if (value.isEmpty) {
+                        return "Contact Number must not be empty";
+                      } else if (value.length != 10) {
+                        return "Should be 10 digit contact number";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        hintText: 'Contact Number',
+                        labelText: 'Contact Number',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(2.0),
+                        )),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    validator: (String value) {
+                      if (value.isEmpty) {
+                        return "Mail ID must not be empty";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        hintText: 'Mail ID',
+                        labelText: 'Mail ID',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(2.0),
+                        )),
+                    keyboardType: TextInputType.emailAddress,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFormField(
+                    validator: (String value) {
+                      if (value.isEmpty) {
+                        return "Location must not be empty";
+                      }
+                      return null;
+                    },
+                    decoration: InputDecoration(
+                        hintText: 'Location',
                         labelText: 'Location',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(2.0),
@@ -181,7 +170,7 @@ class _BuildFormState extends State<BuildForm> {
                   child: TextFormField(
                     validator: (String value) {
                       if (value.isEmpty) {
-                        return "Error must not be empty";
+                        return "Place must not be empty";
                       }
                       return null;
                     },
@@ -197,10 +186,11 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ChipsChoice<int>.single(
-                    value: tag,
+                    value: optionTag,
                     onChanged: (val) => setState(() {
-                      tag = val;
-                      print(options[tag]);
+                      optionTag = val;
+                      optionController.text = options[optionTag];
+                      //  print(options[optionTag]);
                     }),
                     choiceItems: C2Choice.listFrom<int, String>(
                       source: options,
@@ -216,11 +206,12 @@ class _BuildFormState extends State<BuildForm> {
                       if (value.isEmpty) {
                         return "Error must not be empty";
                       }
+
                       return null;
                     },
                     decoration: InputDecoration(
-                        hintText: 'Plot Area',
-                        labelText: 'Plot Area',
+                        hintText: 'Plot Size',
+                        labelText: 'Plot Size',
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(5.0),
                         )),
@@ -229,54 +220,56 @@ class _BuildFormState extends State<BuildForm> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    validator: (String value) {
-                      if (value.isEmpty) {
-                        return "Error must not be empty";
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                        hintText: 'Price',
-                        labelText: 'Price',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        )),
-                    keyboardType: TextInputType.number,
+                  child: ChipsChoice<int>.single(
+                    value: buyerTag,
+                    onChanged: (val) => setState(() {
+                      buyerTag = val;
+                      buyerTypeController.text = buyerType[buyerTag];
+                      // print(buyerType[buyerTag]);
+                    }),
+                    choiceItems: C2Choice.listFrom<int, String>(
+                      source: buyerType,
+                      value: (i, v) => i,
+                      label: (i, v) => v,
+                    ),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    maxLines: 3,
-                    validator: (String value) {
-                      if (value.isEmpty) {
-                        return "Error must not be empty";
-                      }
-
-                      return null;
-                    },
-                    decoration: InputDecoration(
-                        hintText: 'Amenities',
-                        labelText: 'Amenities',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        )),
-                    keyboardType: TextInputType.multiline,
-                  ),
+                RangeSlider(
+                  onChanged: (RangeValues newRange) {
+                    setState(() {
+                      selectedRange = newRange;
+                      startBudgetController.text =
+                          selectedRange.start.toStringAsFixed(2);
+                      endBudgetController.text =
+                          selectedRange.end.toStringAsFixed(2);
+                      print('selected range: $selectedRange');
+                    });
+                  },
+                  min: 200.0,
+                  max: 10000.0,
+                  divisions: 100,
+                  values: selectedRange,
+                  activeColor: Theme.of(context).primaryColor,
+                  labels: RangeLabels(
+                      '\u20B9${selectedRange.start.toStringAsFixed(2)}',
+                      '\u20B9${selectedRange.end.toStringAsFixed(2)}'),
                 ),
-
                 RaisedButton(
-                  color: Color(0xFFFFE97D),
+                  color: Theme.of(context).accentColor,
                   onPressed: () {
+                    print("option: ${optionController.text}");
+                    print("buyerType: ${buyerTypeController.text}");
                     if (widget._formKey.currentState.validate()) {
                       setState(() {
                         progress = true;
                       });
-                      _uploadFile(file, fileName);
                     }
                   },
-                  child: Text('Submit'),
+                  child: Text(
+                    'Submit',
+                    style: Styles.customTextStyle2(
+                        color: Colors.black87, fontWeight: FontWeight.w600),
+                  ),
                 ),
               ],
             ),
