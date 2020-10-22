@@ -8,6 +8,7 @@ import 'package:real_estate/registration_forms/buyer_register.dart';
 import 'package:real_estate/registration_forms/owner_register.dart';
 import 'package:real_estate/registration_forms/realtor_register.dart';
 
+import 'buyer_page/search.dart';
 import 'home_page.dart';
 
 void main() async {
@@ -30,8 +31,8 @@ class RealEstateApp extends StatelessWidget {
         accentColor: Color(0xFF47B3FE),
         focusColor: Color(0xFF0084CA),
       ),
-      initialRoute: LoginScreen.id,
-      // home: Login,
+      // initialRoute: LoginScreen.id,
+      home: Search(),
       routes: {
         "LoginScreen": (context) => LoginScreen(),
         "SignUpScreen": (context) => SignUp(),
