@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:real_estate/card_view.dart';
+import 'package:real_estate/registration/signIn_page.dart';
 import 'package:real_estate/registration_forms/buyer_register.dart';
 import 'package:real_estate/registration_forms/owner_register.dart';
 import 'package:real_estate/registration_forms/realtor_register.dart';
@@ -15,7 +16,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  //final _auth = FirebaseAuth.instance;
+  final _auth = FirebaseAuth.instance;
   final TextEditingController userMobNo = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
@@ -142,8 +143,8 @@ class _HomeState extends State<Home> {
                 title: Text('Sign Out'),
                 leading: Icon(Icons.exit_to_app),
                 onTap: () {
-                  //_auth.signOut();
-                  //     Navigator.pushReplacementNamed(context, LoginScreen.id);
+                  _auth.signOut();
+                  Navigator.pushReplacementNamed(context, LoginScreen.id);
                 })
           ],
         ),

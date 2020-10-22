@@ -2,8 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:real_estate/clipper/shape_clipper.dart';
-import 'package:real_estate/registration/forgot_password.dart';
-import 'package:real_estate/registration/signUp_page.dart';
+import 'package:real_estate/registration/signIn_page.dart';
 import 'package:real_estate/values/borders.dart';
 import 'package:real_estate/values/custom_button.dart';
 import 'package:real_estate/values/cutom_field.dart';
@@ -11,18 +10,15 @@ import 'package:real_estate/values/gradients.dart';
 import 'package:real_estate/values/snackbar_msg.dart';
 import 'package:real_estate/values/styles.dart';
 
-import '../home_page.dart';
-
-class LoginScreen extends StatefulWidget {
-  static const id = "LoginScreen";
+class ForgotPassword extends StatefulWidget {
+  static const id = "ForgotPassword";
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _ForgotPasswordState createState() => _ForgotPasswordState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _ForgotPasswordState extends State<ForgotPassword> {
   final auth = FirebaseAuth.instance;
   String loginEmail;
-  String loginPassword;
   final _loginScaffoldKey = GlobalKey<ScaffoldState>();
   bool progress = false;
   final _formKey = GlobalKey<FormState>();
@@ -74,8 +70,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     Container(
                       margin: EdgeInsets.only(left: widthOfScreen * 0.15),
                       child: Text(
-                        "Log in",
-                        style: theme.textTheme.headline3.copyWith(
+                        "Reset Password",
+                        style: theme.textTheme.headline4.copyWith(
                           color: Color(0xFF666D73),
                         ),
                       ),
@@ -139,45 +135,10 @@ class _LoginScreenState extends State<LoginScreen> {
           SizedBox(
             height: 20.0,
           ),
-          CustomTextFormField(
-            hasTitle: true,
-            title: 'Password',
-            validator: (value) {
-              if (value.isEmpty) {
-                return "Password cannot be empty";
-              }
-              return null;
-            },
-            onChanged: (value) {
-              loginPassword = value;
-            },
-            titleStyle: theme.textTheme.subtitle1.copyWith(
-              color: Color(0xFF247EAA),
-              fontSize: 14.0,
-            ),
-            textInputType: TextInputType.text,
-            hintTextStyle: Styles.customTextStyle(
-              color: Color(0xFFB2B2B2),
-            ),
-            enabledBorder: Borders.customUnderlineInputBorder(
-              color: Color(0xFFD0EBF7),
-            ),
-            focusedBorder: Borders.customUnderlineInputBorder(
-              color: Color(0xFF69C7C6),
-            ),
-            textStyle: Styles.customTextStyle(
-              color: Color(0xFF606060),
-            ),
-            hintText: "Enter Password",
-            obscured: true,
-          ),
-          SizedBox(
-            height: 20.0,
-          ),
           Container(
             width: widthOfScreen * 0.6,
             child: CustomButton(
-              title: 'Log IN',
+              title: 'Change Password',
               color: Color(0xFF2DA6AB),
               textStyle: theme.textTheme.button.copyWith(
                 color: Colors.white,
@@ -191,14 +152,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   });
 
                   try {
-                    final logUser = await auth.signInWithEmailAndPassword(
-                        email: loginEmail, password: loginPassword);
-                    if (logUser != null) {
-                      setState(() {
-                        progress = false;
-                      });
-                      Navigator.pushNamed(context, Home.id);
-                    }
+                    await auth.sendPasswordResetEmail(email: loginEmail);
+                    setState(() {
+                      progress = false;
+                    });
+                    SnackBarMessage(
+                            message: 'Reset Password sent to your $loginEmail',
+                            color: Colors.green,
+                            loginScaffoldKey: _loginScaffoldKey)
+                        .getMessage();
                   } catch (e) {
                     setState(() {
                       progress = false;
@@ -217,41 +179,14 @@ class _LoginScreenState extends State<LoginScreen> {
             height: heightOfScreen * 0.04,
           ),
           InkWell(
-            onTap: () => Navigator.pushNamed(context, SignUp.id),
+            onTap: () => Navigator.pushNamed(context, LoginScreen.id),
             child: RichText(
               text: TextSpan(
                 children: [
                   TextSpan(
-                    text: 'Don\'t have an account',
+                    text: 'Go to Log In',
                     style: theme.textTheme.bodyText1.copyWith(
-                      color: Colors.black,
-                      fontSize: 16.0,
-                    ),
-                  ),
-                  TextSpan(
-                    text: 'Sign Up',
-                    style: theme.textTheme.subtitle2.copyWith(
-                      color: Color(0xFF247EAA),
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          SizedBox(
-            height: heightOfScreen * 0.04,
-          ),
-          InkWell(
-            onTap: () => Navigator.pushNamed(context, ForgotPassword.id),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: 'Forgot Password ?',
-                    style: theme.textTheme.bodyText1.copyWith(
-                      color: Colors.black,
+                      color: Colors.blue,
                       fontSize: 16.0,
                     ),
                   ),

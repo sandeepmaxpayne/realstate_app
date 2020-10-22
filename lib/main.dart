@@ -1,4 +1,7 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:real_estate/buyer_page/buyer_search_page.dart';
+import 'package:real_estate/registration/forgot_password.dart';
 import 'package:real_estate/registration/signIn_page.dart';
 import 'package:real_estate/registration/signUp_page.dart';
 import 'package:real_estate/registration_forms/buyer_register.dart';
@@ -7,7 +10,9 @@ import 'package:real_estate/registration_forms/realtor_register.dart';
 
 import 'home_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(RealEstateApp());
 }
 
@@ -25,11 +30,12 @@ class RealEstateApp extends StatelessWidget {
         accentColor: Color(0xFF47B3FE),
         focusColor: Color(0xFF0084CA),
       ),
-      initialRoute: Home.id,
-      // home: ,
+      initialRoute: LoginScreen.id,
+      // home: Login,
       routes: {
         "LoginScreen": (context) => LoginScreen(),
         "SignUpScreen": (context) => SignUp(),
+        "ForgotPassword": (context) => ForgotPassword(),
         "home": (context) => Home(),
         "OwnerReg": (context) => OwnerRegister(),
         "BuyerReg": (context) => BuyerRegister(),
