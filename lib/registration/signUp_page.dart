@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:provider/provider.dart';
+import 'package:real_estate/change_phone_no/change_no.dart';
 import 'package:real_estate/clipper/shape_clipper.dart';
 import 'package:real_estate/controller/user_controller.dart';
 import 'package:real_estate/modal/user_modal.dart';
@@ -347,6 +349,8 @@ class _SignUpState extends State<SignUp> {
                       setState(() {
                         showSpinner = false;
                       });
+                      Provider.of<ChangePhoneNo>(context, listen: false)
+                          .changeData(phoneNo);
                       Navigator.pushNamed(context, Home.id);
                     }
                   } catch (e) {

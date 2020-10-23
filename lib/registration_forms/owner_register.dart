@@ -7,6 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:provider/provider.dart';
+import 'package:real_estate/change_phone_no/change_no.dart';
+import 'package:real_estate/controller/owner_controller.dart';
+import 'package:real_estate/modal/owner_modal.dart';
+import 'package:real_estate/values/snackbar_msg.dart';
 import 'package:real_estate/values/styles.dart';
 
 class OwnerRegister extends StatelessWidget {
@@ -70,7 +75,16 @@ class _BuildFormState extends State<BuildForm> {
   File file;
   bool isUploaded = true;
   TextEditingController ownerImageController = TextEditingController();
-  TextEditingController optionController = TextEditingController();
+  TextEditingController ownerOptionController = TextEditingController();
+  TextEditingController nameOwnerController = TextEditingController();
+  TextEditingController phoneNoOwnerController = TextEditingController();
+  TextEditingController emailOwnerController = TextEditingController();
+  TextEditingController otherDocOwnerController = TextEditingController();
+  TextEditingController locationOwnerController = TextEditingController();
+  TextEditingController placeOwnerController = TextEditingController();
+  TextEditingController areaOwnerController = TextEditingController();
+  TextEditingController priceOwnerController = TextEditingController();
+  TextEditingController amenityOwnerController = TextEditingController();
 
   int uploadNo = 0;
   Future filePicker(BuildContext context) async {
@@ -113,19 +127,19 @@ class _BuildFormState extends State<BuildForm> {
     StorageReference storageReference;
 
     if (fileType == 'others') {
-      storageReference =
-          FirebaseStorage.instance.ref().child('owner/document/$fileName');
+      storageReference = FirebaseStorage.instance.ref().child(
+          'owner/${Provider.of<ChangePhoneNo>(context, listen: false).phNo}/$fileName');
     }
     final StorageUploadTask uploadTask = storageReference.putFile(file);
     final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
     final String url = (await downloadUrl.ref.getDownloadURL());
     print("Optional Url is $url");
-    ownerImageController.text = url;
+    otherDocOwnerController.text = url;
   }
 
   @override
   Widget build(BuildContext context) {
-    optionController.text = options[tag];
+    ownerOptionController.text = options[tag];
     return Scaffold(
       key: _scaffoldKey,
       body: ModalProgressHUD(
@@ -181,6 +195,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: nameOwnerController,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Name must not be empty";
@@ -199,6 +214,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: phoneNoOwnerController,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Contact Number must not be empty";
@@ -219,6 +235,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: emailOwnerController,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Email must not be empty";
@@ -271,6 +288,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: locationOwnerController,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "location must not be empty";
@@ -289,6 +307,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: placeOwnerController,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Place must not be empty";
@@ -310,7 +329,7 @@ class _BuildFormState extends State<BuildForm> {
                     value: tag,
                     onChanged: (val) => setState(() {
                       tag = val;
-                      optionController.text = options[tag];
+                      ownerOptionController.text = options[tag];
                       //print(options[tag]);
                     }),
                     choiceItems: C2Choice.listFrom<int, String>(
@@ -323,6 +342,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: areaOwnerController,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Area must not be empty";
@@ -341,6 +361,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: priceOwnerController,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Price must not be empty";
@@ -359,6 +380,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: amenityOwnerController,
                     maxLines: 3,
                     validator: (String value) {
                       if (value.isEmpty) {
@@ -385,6 +407,49 @@ class _BuildFormState extends State<BuildForm> {
                         progress = true;
                       });
                       _uploadFile(file, fileName);
+
+                      OwnerModal ownerForm = OwnerModal(
+                        ownerImageController.text,
+                        nameOwnerController.text,
+                        phoneNoOwnerController.text,
+                        emailOwnerController.text,
+                        otherDocOwnerController.text,
+                        locationOwnerController.text,
+                        placeOwnerController.text,
+                        ownerOptionController.text,
+                        areaOwnerController.text,
+                        priceOwnerController.text,
+                        amenityOwnerController.text,
+                      );
+                      OwnerController ownerController = OwnerController();
+
+                      //store data to sheet
+                      ownerController.submitForm(ownerForm, (String response) {
+                        print("response: $response");
+                        if (response == OwnerController.STATUS_SUCCESS) {
+                          //data saved successfully in google sheets
+                          setState(() {
+                            progress = false;
+                          });
+                          print(
+                              "data recorded successfully ${ownerForm.toJson()}");
+                          SnackBarMessage(
+                                  message: "Data recorded successfully",
+                                  color: Colors.green,
+                                  loginScaffoldKey: _scaffoldKey)
+                              .getMessage();
+                        } else {
+                          setState(() {
+                            progress = false;
+                          });
+                          print("error saving data");
+                          SnackBarMessage(
+                                  message: "Error Saving Data!",
+                                  color: Colors.red,
+                                  loginScaffoldKey: _scaffoldKey)
+                              .getMessage();
+                        }
+                      });
                     }
                   },
                   child: Text(

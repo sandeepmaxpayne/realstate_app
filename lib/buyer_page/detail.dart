@@ -60,11 +60,6 @@ class Detail extends StatelessWidget {
                           size: 24,
                         ),
                       ),
-                      Icon(
-                        Icons.notifications_none,
-                        color: Colors.white,
-                        size: 28,
-                      ),
                     ],
                   ),
                 ),

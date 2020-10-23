@@ -6,6 +6,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:provider/provider.dart';
+import 'package:real_estate/change_phone_no/change_no.dart';
+import 'package:real_estate/controller/realtor_controller.dart';
+import 'package:real_estate/modal/realtor_modal.dart';
+import 'package:real_estate/values/snackbar_msg.dart';
 import 'package:real_estate/values/styles.dart';
 
 class RealtorRegister extends StatelessWidget {
@@ -68,8 +73,17 @@ class _BuildFormState extends State<BuildForm> {
   String operationText = '';
   File file;
   bool isUploaded = true;
-  TextEditingController ownerImageController = TextEditingController();
-  TextEditingController optionController = TextEditingController();
+  TextEditingController realtorImageController = TextEditingController();
+  TextEditingController realtorOptionController = TextEditingController();
+  TextEditingController realtorName = TextEditingController();
+  TextEditingController realtorPhoneNo = TextEditingController();
+  TextEditingController realtorEmail = TextEditingController();
+  TextEditingController realtorOtherDoc = TextEditingController();
+  TextEditingController realtorLocation = TextEditingController();
+  TextEditingController realtorPlace = TextEditingController();
+  TextEditingController realtorArea = TextEditingController();
+  TextEditingController realtorPrice = TextEditingController();
+  TextEditingController realtorAmenity = TextEditingController();
 
   int uploadNo = 0;
   Future filePicker(BuildContext context) async {
@@ -105,26 +119,26 @@ class _BuildFormState extends State<BuildForm> {
     final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
     final String url = (await downloadUrl.ref.getDownloadURL());
     print("URL is $url");
-    ownerImageController.text = url;
+    realtorImageController.text = url;
   }
 
   Future<void> _uploadOptionalDocument(File file, String fileName) async {
     StorageReference storageReference;
 
     if (fileType == 'others') {
-      storageReference =
-          FirebaseStorage.instance.ref().child('realtor/document/$fileName');
+      storageReference = FirebaseStorage.instance.ref().child(
+          'realtor/${Provider.of<ChangePhoneNo>(context, listen: false).phNo}/$fileName');
     }
     final StorageUploadTask uploadTask = storageReference.putFile(file);
     final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
     final String url = (await downloadUrl.ref.getDownloadURL());
     print("Optional Url is $url");
-    ownerImageController.text = url;
+    realtorOtherDoc.text = url;
   }
 
   @override
   Widget build(BuildContext context) {
-    optionController.text = options[tag];
+    realtorOptionController.text = options[tag];
     return Scaffold(
       key: _scaffoldKey,
       body: ModalProgressHUD(
@@ -180,6 +194,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: realtorName,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Name must not be empty";
@@ -198,6 +213,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: realtorPhoneNo,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Contact Number must not be empty";
@@ -218,6 +234,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: realtorEmail,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Email must not be empty";
@@ -270,6 +287,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: realtorLocation,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "location must not be empty";
@@ -288,6 +306,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: realtorPlace,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Place must not be empty";
@@ -309,7 +328,7 @@ class _BuildFormState extends State<BuildForm> {
                     value: tag,
                     onChanged: (val) => setState(() {
                       tag = val;
-                      optionController.text = options[tag];
+                      realtorOptionController.text = options[tag];
                       // print(options[tag]);
                     }),
                     choiceItems: C2Choice.listFrom<int, String>(
@@ -322,6 +341,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: realtorArea,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Area must not be empty";
@@ -340,6 +360,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: realtorPrice,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Price must not be empty";
@@ -358,6 +379,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: realtorAmenity,
                     maxLines: 3,
                     validator: (String value) {
                       if (value.isEmpty) {
@@ -380,10 +402,54 @@ class _BuildFormState extends State<BuildForm> {
                   color: Theme.of(context).accentColor,
                   onPressed: () {
                     if (widget._formKey.currentState.validate()) {
+                      //upload the file image
+                      _uploadFile(file, fileName);
                       setState(() {
                         progress = true;
                       });
-                      _uploadFile(file, fileName);
+
+                      RealtorModal realtorForm = RealtorModal(
+                          realtorImageController.text,
+                          realtorName.text,
+                          realtorPhoneNo.text,
+                          realtorEmail.text,
+                          realtorOtherDoc.text,
+                          realtorLocation.text,
+                          realtorPlace.text,
+                          realtorOptionController.text,
+                          realtorArea.text,
+                          realtorPrice.text,
+                          realtorAmenity.text);
+                      RealtorController realtorController = RealtorController();
+
+                      //store data to sheet
+                      realtorController.submitForm(realtorForm,
+                          (String response) {
+                        print("response: $response");
+                        if (response == RealtorController.STATUS_SUCCESS) {
+                          //data saved successfully in google sheets
+                          setState(() {
+                            progress = false;
+                          });
+                          print(
+                              "data recorded successfully ${realtorForm.toJson()}");
+                          SnackBarMessage(
+                                  message: "Data recorded successfully",
+                                  color: Colors.green,
+                                  loginScaffoldKey: _scaffoldKey)
+                              .getMessage();
+                        } else {
+                          setState(() {
+                            progress = false;
+                          });
+                          print("error saving data");
+                          SnackBarMessage(
+                                  message: "Error Saving Data!",
+                                  color: Colors.red,
+                                  loginScaffoldKey: _scaffoldKey)
+                              .getMessage();
+                        }
+                      });
                     }
                   },
                   child: Text(

@@ -4,6 +4,9 @@ import 'package:chips_choice/chips_choice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:real_estate/controller/buyer_controller.dart';
+import 'package:real_estate/modal/buyer_modal.dart';
+import 'package:real_estate/values/snackbar_msg.dart';
 import 'package:real_estate/values/styles.dart';
 
 class BuyerRegister extends StatelessWidget {
@@ -71,12 +74,18 @@ class _BuildFormState extends State<BuildForm> {
   var selectedRange = RangeValues(500, 1000);
   TextEditingController startBudgetController = TextEditingController();
   TextEditingController endBudgetController = TextEditingController();
-  TextEditingController optionController = TextEditingController();
+  TextEditingController buyerOptionController = TextEditingController();
   TextEditingController buyerTypeController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
+  TextEditingController phoneNoController = TextEditingController();
+  TextEditingController emailController = TextEditingController();
+  TextEditingController locationController = TextEditingController();
+  TextEditingController placeController = TextEditingController();
+  TextEditingController plotSizeController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    optionController.text = options[optionTag];
+    buyerOptionController.text = options[optionTag];
     buyerTypeController.text = buyerType[buyerTag];
 
     return Scaffold(
@@ -94,6 +103,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: nameController,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Error must not be empty";
@@ -112,6 +122,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: phoneNoController,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Contact Number must not be empty";
@@ -132,6 +143,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: emailController,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Mail ID must not be empty";
@@ -150,6 +162,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: locationController,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Location must not be empty";
@@ -168,6 +181,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: placeController,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Place must not be empty";
@@ -189,7 +203,7 @@ class _BuildFormState extends State<BuildForm> {
                     value: optionTag,
                     onChanged: (val) => setState(() {
                       optionTag = val;
-                      optionController.text = options[optionTag];
+                      buyerOptionController.text = options[optionTag];
                       //  print(options[optionTag]);
                     }),
                     choiceItems: C2Choice.listFrom<int, String>(
@@ -202,6 +216,7 @@ class _BuildFormState extends State<BuildForm> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: TextFormField(
+                    controller: plotSizeController,
                     validator: (String value) {
                       if (value.isEmpty) {
                         return "Plot size must not be empty";
@@ -257,11 +272,52 @@ class _BuildFormState extends State<BuildForm> {
                 RaisedButton(
                   color: Theme.of(context).accentColor,
                   onPressed: () {
-                    print("option: ${optionController.text}");
+                    print("option: ${buyerOptionController.text}");
                     print("buyerType: ${buyerTypeController.text}");
                     if (widget._formKey.currentState.validate()) {
                       setState(() {
                         progress = true;
+                      });
+
+                      BuyerModal buyerForm = BuyerModal(
+                          nameController.text,
+                          phoneNoController.text,
+                          emailController.text,
+                          locationController.text,
+                          placeController.text,
+                          buyerOptionController.text,
+                          plotSizeController.text,
+                          buyerOptionController.text,
+                          startBudgetController.text,
+                          endBudgetController.text);
+                      BuyerController buyerController = BuyerController();
+
+                      //store data to sheet
+                      buyerController.submitForm(buyerForm, (String response) {
+                        print("response: $response");
+                        if (response == BuyerController.STATUS_SUCCESS) {
+                          //data saved successfully in google sheets
+                          setState(() {
+                            progress = false;
+                          });
+                          print(
+                              "data recorded successfully ${buyerForm.toJson()}");
+                          SnackBarMessage(
+                                  message: "Data recorded successfully",
+                                  color: Colors.green,
+                                  loginScaffoldKey: _scaffoldKey)
+                              .getMessage();
+                        } else {
+                          setState(() {
+                            progress = false;
+                          });
+                          print("error saving data");
+                          SnackBarMessage(
+                                  message: "Error Saving Data!",
+                                  color: Colors.red,
+                                  loginScaffoldKey: _scaffoldKey)
+                              .getMessage();
+                        }
                       });
                     }
                   },
