@@ -4,8 +4,9 @@ import 'package:real_estate/modal/buyer_modal.dart';
 
 class BuyerController {
   // Google App Script Web URL
-  //TODO url
-  static const String URL = "";
+  //TODO check buyer url upload [assigned]
+  static const String URL =
+      "https://script.google.com/macros/s/AKfycbziefL0RN2mVWzdsPpsuaOrz9DGIO7Faj01WZQB-h7ja4BWX_c/exec";
 
   static const STATUS_SUCCESS = "SUCCESS";
 

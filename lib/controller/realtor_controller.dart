@@ -4,8 +4,9 @@ import 'package:real_estate/modal/realtor_modal.dart';
 
 class RealtorController {
   // Google App Script Web URL
-  //TODO url
-  static const String URL = "";
+  //TODO test the realtor upload url [Assigned]
+  static const String URL =
+      "https://script.google.com/macros/s/AKfycbwcrtVmMOarcWwz5J0ftPeD3MCVUQkjKrKiSjMZPU1NwDwum9Q/exec";
 
   static const STATUS_SUCCESS = "SUCCESS";
 

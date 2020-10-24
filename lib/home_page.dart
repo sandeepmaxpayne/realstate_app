@@ -180,7 +180,7 @@ class _HomeState extends State<Home> {
             title1: 'Buyer',
             title2: 'buyer',
             desc: 'none',
-          )
+          ),
 
           /**  RaisedButton(
                   onPressed: () async {

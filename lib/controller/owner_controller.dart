@@ -4,14 +4,14 @@ import 'package:real_estate/modal/owner_modal.dart';
 
 class OwnerController {
   // Google App Script Web URL
-  //TODO url
-  static const String URL = "";
+  //TODO test owner upload url
+  static const String URL =
+      "https://script.google.com/macros/s/AKfycbz7RB1exMwltJoczN8mzgeb-BrvSfSw6tn_-r_N7qHSv71Y1sc/exec";
 
   static const STATUS_SUCCESS = "SUCCESS";
 
   ///async function which saves the form data , parses [FeedForm] parameters
   ///and sends HTTP GET request on [URL]. on success [callback] is called.
-
   void submitForm(OwnerModal feedForm, void Function(String) callback) async {
     try {
       await http.post(URL, body: feedForm.toJson()).then((response) async {

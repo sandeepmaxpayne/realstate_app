@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:provider/provider.dart';
+import 'package:real_estate/change_phone_no/change_no.dart';
 import 'package:real_estate/clipper/shape_clipper.dart';
 import 'package:real_estate/registration/forgot_password.dart';
 import 'package:real_estate/registration/signUp_page.dart';
@@ -186,6 +188,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 fontSize: 16.0,
               ),
               onPressed: () async {
+                FocusScopeNode currentFocus = FocusScope.of(context);
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
                 if (_formKey.currentState.validate()) {
                   setState(() {
                     progress = true;
@@ -198,6 +204,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       setState(() {
                         progress = false;
                       });
+                      Provider.of<ChangeEmailAddress>(context, listen: false)
+                          .changeData(loginEmail);
                       Navigator.pushNamed(context, Home.id);
                     }
                   } catch (e) {

@@ -128,7 +128,7 @@ class _BuildFormState extends State<BuildForm> {
 
     if (fileType == 'others') {
       storageReference = FirebaseStorage.instance.ref().child(
-          'owner/${Provider.of<ChangePhoneNo>(context, listen: false).phNo}/$fileName');
+          'owner/${Provider.of<ChangeEmailAddress>(context, listen: false).emailAddress}/$fileName');
     }
     final StorageUploadTask uploadTask = storageReference.putFile(file);
     final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
@@ -408,48 +408,59 @@ class _BuildFormState extends State<BuildForm> {
                       });
                       _uploadFile(file, fileName);
 
-                      OwnerModal ownerForm = OwnerModal(
-                        ownerImageController.text,
-                        nameOwnerController.text,
-                        phoneNoOwnerController.text,
-                        emailOwnerController.text,
-                        otherDocOwnerController.text,
-                        locationOwnerController.text,
-                        placeOwnerController.text,
-                        ownerOptionController.text,
-                        areaOwnerController.text,
-                        priceOwnerController.text,
-                        amenityOwnerController.text,
-                      );
-                      OwnerController ownerController = OwnerController();
+                      if (ownerImageController.text.length > 5) {
+                        OwnerModal ownerForm = OwnerModal(
+                          ownerImageController.text,
+                          nameOwnerController.text,
+                          phoneNoOwnerController.text,
+                          emailOwnerController.text,
+                          otherDocOwnerController.text,
+                          locationOwnerController.text,
+                          placeOwnerController.text,
+                          ownerOptionController.text,
+                          areaOwnerController.text,
+                          priceOwnerController.text,
+                          amenityOwnerController.text,
+                        );
+                        OwnerController ownerController = OwnerController();
 
-                      //store data to sheet
-                      ownerController.submitForm(ownerForm, (String response) {
-                        print("response: $response");
-                        if (response == OwnerController.STATUS_SUCCESS) {
-                          //data saved successfully in google sheets
-                          setState(() {
-                            progress = false;
-                          });
-                          print(
-                              "data recorded successfully ${ownerForm.toJson()}");
-                          SnackBarMessage(
-                                  message: "Data recorded successfully",
-                                  color: Colors.green,
-                                  loginScaffoldKey: _scaffoldKey)
-                              .getMessage();
-                        } else {
-                          setState(() {
-                            progress = false;
-                          });
-                          print("error saving data");
-                          SnackBarMessage(
-                                  message: "Error Saving Data!",
-                                  color: Colors.red,
-                                  loginScaffoldKey: _scaffoldKey)
-                              .getMessage();
-                        }
-                      });
+                        //store data to sheet
+                        ownerController.submitForm(ownerForm,
+                            (String response) {
+                          print("response: $response");
+                          if (response == OwnerController.STATUS_SUCCESS) {
+                            //data saved successfully in google sheets
+                            setState(() {
+                              progress = false;
+                            });
+                            print(
+                                "data recorded successfully ${ownerForm.toJson()}");
+                            SnackBarMessage(
+                                    message: "Data recorded successfully",
+                                    color: Colors.green,
+                                    loginScaffoldKey: _scaffoldKey)
+                                .getMessage();
+                          } else {
+                            setState(() {
+                              progress = false;
+                            });
+                            print("error saving data");
+                            SnackBarMessage(
+                                    message: "Error Saving Data!",
+                                    color: Colors.red,
+                                    loginScaffoldKey: _scaffoldKey)
+                                .getMessage();
+                          }
+                        });
+                      } else {
+                        setState(() {
+                          progress = false;
+                        });
+                        SnackBarMessage(
+                            message: "Please submit again! Error Saving Data",
+                            color: Colors.red,
+                            loginScaffoldKey: _scaffoldKey);
+                      }
                     }
                   },
                   child: Text(

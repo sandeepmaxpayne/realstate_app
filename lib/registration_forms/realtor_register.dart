@@ -127,7 +127,7 @@ class _BuildFormState extends State<BuildForm> {
 
     if (fileType == 'others') {
       storageReference = FirebaseStorage.instance.ref().child(
-          'realtor/${Provider.of<ChangePhoneNo>(context, listen: false).phNo}/$fileName');
+          'realtor/${Provider.of<ChangeEmailAddress>(context, listen: false).emailAddress}/$fileName');
     }
     final StorageUploadTask uploadTask = storageReference.putFile(file);
     final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
@@ -407,49 +407,59 @@ class _BuildFormState extends State<BuildForm> {
                       setState(() {
                         progress = true;
                       });
+                      if (realtorImageController.text.length > 5) {
+                        RealtorModal realtorForm = RealtorModal(
+                            realtorImageController.text,
+                            realtorName.text,
+                            realtorPhoneNo.text,
+                            realtorEmail.text,
+                            realtorOtherDoc.text,
+                            realtorLocation.text,
+                            realtorPlace.text,
+                            realtorOptionController.text,
+                            realtorArea.text,
+                            realtorPrice.text,
+                            realtorAmenity.text);
+                        RealtorController realtorController =
+                            RealtorController();
 
-                      RealtorModal realtorForm = RealtorModal(
-                          realtorImageController.text,
-                          realtorName.text,
-                          realtorPhoneNo.text,
-                          realtorEmail.text,
-                          realtorOtherDoc.text,
-                          realtorLocation.text,
-                          realtorPlace.text,
-                          realtorOptionController.text,
-                          realtorArea.text,
-                          realtorPrice.text,
-                          realtorAmenity.text);
-                      RealtorController realtorController = RealtorController();
-
-                      //store data to sheet
-                      realtorController.submitForm(realtorForm,
-                          (String response) {
-                        print("response: $response");
-                        if (response == RealtorController.STATUS_SUCCESS) {
-                          //data saved successfully in google sheets
-                          setState(() {
-                            progress = false;
-                          });
-                          print(
-                              "data recorded successfully ${realtorForm.toJson()}");
-                          SnackBarMessage(
-                                  message: "Data recorded successfully",
-                                  color: Colors.green,
-                                  loginScaffoldKey: _scaffoldKey)
-                              .getMessage();
-                        } else {
-                          setState(() {
-                            progress = false;
-                          });
-                          print("error saving data");
-                          SnackBarMessage(
-                                  message: "Error Saving Data!",
-                                  color: Colors.red,
-                                  loginScaffoldKey: _scaffoldKey)
-                              .getMessage();
-                        }
-                      });
+                        //store data to sheet
+                        realtorController.submitForm(realtorForm,
+                            (String response) {
+                          print("response: $response");
+                          if (response == RealtorController.STATUS_SUCCESS) {
+                            //data saved successfully in google sheets
+                            setState(() {
+                              progress = false;
+                            });
+                            print(
+                                "data recorded successfully ${realtorForm.toJson()}");
+                            SnackBarMessage(
+                                    message: "Data recorded successfully",
+                                    color: Colors.green,
+                                    loginScaffoldKey: _scaffoldKey)
+                                .getMessage();
+                          } else {
+                            setState(() {
+                              progress = false;
+                            });
+                            print("error saving data");
+                            SnackBarMessage(
+                                    message: "Error Saving Data!",
+                                    color: Colors.red,
+                                    loginScaffoldKey: _scaffoldKey)
+                                .getMessage();
+                          }
+                        });
+                      } else {
+                        setState(() {
+                          progress = false;
+                        });
+                        SnackBarMessage(
+                            message: "Please submit again! Error Saving Data",
+                            color: Colors.red,
+                            loginScaffoldKey: _scaffoldKey);
+                      }
                     }
                   },
                   child: Text(

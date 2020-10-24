@@ -311,6 +311,10 @@ class _SignUpState extends State<SignUp> {
                 fontSize: 16.0,
               ),
               onPressed: () async {
+                FocusScopeNode currentFocus = FocusScope.of(context);
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
                 if (_verify() && onCheck == true) {
                   UserModal feedForm =
                       UserModal(name, registerEmail, phoneNo, address);
@@ -349,7 +353,7 @@ class _SignUpState extends State<SignUp> {
                       setState(() {
                         showSpinner = false;
                       });
-                      Provider.of<ChangePhoneNo>(context, listen: false)
+                      Provider.of<ChangeEmailAddress>(context, listen: false)
                           .changeData(phoneNo);
                       Navigator.pushNamed(context, Home.id);
                     }

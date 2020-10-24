@@ -5,7 +5,8 @@ import 'package:real_estate/modal/user_modal.dart';
 class UserController {
   // Google App Script Web URL
   //TODO url
-  static const String URL = "";
+  static const String URL =
+      "https://script.google.com/macros/s/AKfycbzGAWi6BdApz9IDTKVCVY82xLoLP6bJzb3G3oA7Vt3V9imgBwk/exec";
 
   static const STATUS_SUCCESS = "SUCCESS";
 
