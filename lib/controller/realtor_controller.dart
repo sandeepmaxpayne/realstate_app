@@ -35,8 +35,7 @@ class RealtorController {
   Future<List<RealtorModal>> getFeedList() async {
     return await http.get(URL).then((response) {
       var jsonFeedResult = convert.jsonDecode(response.body) as List;
-      print(
-          "response: ${jsonFeedResult.map((v) => RealtorModal.fromJson(v).toJson())}");
+      //print("response: ${jsonFeedResult.map((v) => RealtorModal.fromJson(v).toJson())}");
 
       return jsonFeedResult.map((json) => RealtorModal.fromJson(json)).toList();
     });

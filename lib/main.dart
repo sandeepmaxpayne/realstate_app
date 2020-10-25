@@ -34,8 +34,8 @@ class RealEstateApp extends StatelessWidget {
           accentColor: Color(0xFF47B3FE),
           focusColor: Color(0xFF0084CA),
         ),
-        initialRoute: LoginScreen.id,
-        // home: Search(),
+        // initialRoute: LoginScreen.id,
+        home: Search(),
         routes: {
           "LoginScreen": (context) => LoginScreen(),
           "SignUpScreen": (context) => SignUp(),

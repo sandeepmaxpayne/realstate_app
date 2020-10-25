@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'data.dart';
 
@@ -21,7 +22,7 @@ class Detail extends StatelessWidget {
               height: size.height * 0.5,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: AssetImage(property.frontImage),
+                  image: NetworkImage(property.frontImage),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -81,7 +82,7 @@ class Detail extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        "FOR " + property.label,
+                        property.label,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 14,
@@ -224,7 +225,7 @@ class Detail extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "John Miller",
+                                    property.ownerName,
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -244,6 +245,7 @@ class Detail extends StatelessWidget {
                               ),
                             ],
                           ),
+                          //TODO Write the Phone No and link it to AutoLauncher
                           Row(
                             children: [
                               Container(
@@ -254,10 +256,16 @@ class Detail extends StatelessWidget {
                                   shape: BoxShape.circle,
                                 ),
                                 child: Center(
-                                  child: Icon(
-                                    Icons.phone,
+                                  child: IconButton(
+                                    onPressed: () async {
+                                      final Uri _phoneLauncher = Uri(
+                                          scheme: 'tel',
+                                          path: property.contactNo);
+                                      launch(_phoneLauncher.toString());
+                                    },
+                                    icon: Icon(Icons.phone),
                                     color: Colors.purple,
-                                    size: 20,
+                                    iconSize: 20,
                                   ),
                                 ),
                               ),
@@ -390,9 +398,11 @@ class Detail extends StatelessWidget {
     list.add(SizedBox(
       width: 24,
     ));
+
     for (var i = 0; i < images.length; i++) {
       list.add(buildPhoto(images[i]));
     }
+
     return list;
   }
 

@@ -34,8 +34,7 @@ class OwnerController {
   Future<List<OwnerModal>> getFeedList() async {
     return await http.get(URL).then((response) {
       var jsonFeedResult = convert.jsonDecode(response.body) as List;
-      print(
-          "response: ${jsonFeedResult.map((v) => OwnerModal.fromJson(v).toJson())}");
+      // print("response: ${jsonFeedResult.map((v) => OwnerModal.fromJson(v).toJson())}");
 
       return jsonFeedResult.map((json) => OwnerModal.fromJson(json)).toList();
     });

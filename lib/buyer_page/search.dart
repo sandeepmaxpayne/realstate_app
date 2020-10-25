@@ -1,4 +1,13 @@
+import 'dart:math';
+
+import 'package:flappy_search_bar/flappy_search_bar.dart';
+import 'package:flappy_search_bar/scaled_tile.dart';
+import 'package:flappy_search_bar/search_bar_style.dart';
 import 'package:flutter/material.dart';
+import 'package:real_estate/controller/owner_controller.dart';
+import 'package:real_estate/controller/realtor_controller.dart';
+import 'package:real_estate/modal/owner_modal.dart';
+import 'package:real_estate/modal/realtor_modal.dart';
 import 'data.dart';
 import 'detail.dart';
 import 'filter.dart';
@@ -9,153 +18,264 @@ class Search extends StatefulWidget {
 }
 
 class _SearchState extends State<Search> {
-  List<Property> properties = getPropertyList();
+  // List<Property> properties = getPropertyList();
+
+  List<Property> properties = [];
+  List<OwnerModal> ownerData = List<OwnerModal>();
+  List<RealtorModal> realtorData = List<RealtorModal>();
+  @override
+  void initState() {
+    super.initState();
+    properties.clear();
+    //Owner Controller
+    OwnerController().getFeedList().then((ownerData) {
+      setState(() {
+        this.ownerData = ownerData;
+        print("owner data: ${ownerData[0].toJson()}");
+      });
+    });
+    //Realtor Controller
+    RealtorController().getFeedList().then((realtorData) {
+      setState(() {
+        this.realtorData = realtorData;
+        print("realtor Data: ${realtorData[0].toJson()}");
+      });
+    });
+  }
+
+  void getRealTimePropertyList() {
+    // Add OwnerData List to Property List
+    if (ownerData.length > 1) {
+      for (int i = 0; i < ownerData.length - 1; i++) {
+        properties.add(Property(
+            label: "OWNER",
+            ownerName: ownerData[i].name,
+            name: ownerData[i].option,
+            description: ownerData[i].amenity,
+            frontImage: ownerData[i].imageLink,
+            location: ownerData[i].location,
+            price: ownerData[i].price,
+            review: "4.5",
+            sqm: ownerData[i].area,
+            contactNo: ownerData[i].phoneNo,
+            images: [
+              "assets/images/kitchen.jpg",
+              "assets/images/bath_room.jpg",
+              "assets/images/swimming_pool.jpg",
+              "assets/images/bed_room.jpg",
+              "assets/images/living_room.jpg",
+            ]));
+      }
+    }
+    // Add Realtor Data List to Property List
+    if (realtorData.length > 1) {
+      for (int i = 0; i < realtorData.length - 1; i++) {
+        properties.add(Property(
+          label: "REALTOR",
+          ownerName: realtorData[i].name,
+          name: realtorData[i].option,
+          description: realtorData[i].amenity,
+          frontImage: realtorData[i].imageUrl,
+          location: realtorData[i].location,
+          price: realtorData[i].price,
+          review: "4.5",
+          sqm: realtorData[i].area,
+          contactNo: realtorData[i].phoneNo,
+          images: [
+            "assets/images/kitchen.jpg",
+            "assets/images/bath_room.jpg",
+            "assets/images/swimming_pool.jpg",
+            "assets/images/bed_room.jpg",
+            "assets/images/living_room.jpg",
+          ],
+        ));
+      }
+    }
+  }
+
+  final SearchBarController<Property> _searchBarController =
+      SearchBarController();
+  Future<List<Property>> _getALlPosts(String text) async {
+    await Future.delayed(Duration(seconds: text.length == 4 ? 5 : 1));
+
+    if (text.length > 15) throw Error();
+    List<Property> posts = [];
+
+    for (int i = 0; i < properties.length; i++) {
+      posts.add(properties[i]);
+    }
+    return posts;
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(top: 48, left: 24, right: 24, bottom: 16),
-            child: TextField(
-              style: TextStyle(
-                fontSize: 28,
-                height: 1,
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-              decoration: InputDecoration(
-                hintText: 'Search',
-                hintStyle: TextStyle(
-                  fontSize: 28,
-                  color: Colors.grey[400],
-                ),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey[400]),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey[400]),
-                ),
-                border: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey[400]),
-                ),
-                suffixIcon: Padding(
-                  padding: EdgeInsets.only(left: 16),
-                  child: Icon(
-                    Icons.search,
-                    color: Colors.grey[400],
-                    size: 28,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(top: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Container(
-                    height: 32,
-                    child: Stack(
-                      children: [
-                        ListView(
-                          physics: BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
+    getRealTimePropertyList();
+    print("properties 1: $properties");
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: SearchBar<Property>(
+                  searchBarPadding: EdgeInsets.symmetric(horizontal: 16),
+                  headerPadding: EdgeInsets.symmetric(horizontal: 16),
+                  listPadding: EdgeInsets.symmetric(horizontal: 16),
+                  onSearch: _getALlPosts,
+                  searchBarController: _searchBarController,
+                  placeHolder: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.only(top: 16),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            SizedBox(
-                              width: 24,
+                            Expanded(
+                              child: Container(
+                                height: 32,
+                                child: Stack(
+                                  children: [
+                                    ListView(
+                                      physics: BouncingScrollPhysics(),
+                                      scrollDirection: Axis.horizontal,
+                                      children: [
+                                        SizedBox(
+                                          width: 24,
+                                        ),
+                                        buildFilter("Plot"),
+                                        buildFilter("Apartment"),
+                                        buildFilter("House"),
+                                        SizedBox(
+                                          width: 8,
+                                        ),
+                                      ],
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerRight,
+                                      child: Container(
+                                        width: 28,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            begin: Alignment.centerRight,
+                                            end: Alignment.centerLeft,
+                                            stops: [0.0, 1.0],
+                                            colors: [
+                                              Theme.of(context)
+                                                  .scaffoldBackgroundColor,
+                                              Theme.of(context)
+                                                  .scaffoldBackgroundColor
+                                                  .withOpacity(0.0),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
-                            buildFilter("House"),
-                            buildFilter("Price"),
-                            buildFilter("Security"),
-                            buildFilter("Bedrooms"),
-                            buildFilter("Garage"),
-                            buildFilter("Swimming Pool"),
-                            SizedBox(
-                              width: 8,
+                            GestureDetector(
+                              onTap: () {
+                                //    _showBottomSheet();
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 16, right: 24),
+                                child: Text(
+                                  "Filters",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
                             ),
                           ],
                         ),
-                        Align(
-                          alignment: Alignment.centerRight,
-                          child: Container(
-                            width: 28,
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.centerRight,
-                                end: Alignment.centerLeft,
-                                stops: [0.0, 1.0],
-                                colors: [
-                                  Theme.of(context).scaffoldBackgroundColor,
-                                  Theme.of(context)
-                                      .scaffoldBackgroundColor
-                                      .withOpacity(0.0),
-                                ],
+                      ),
+                      Padding(
+                        padding: EdgeInsets.only(
+                            right: 24, left: 24, top: 24, bottom: 12),
+                        child: Row(
+                          children: [
+                            Text(
+                              properties.length.toString(),
+                              style: TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
                               ),
                             ),
+                            SizedBox(
+                              width: 8,
+                            ),
+                            Text(
+                              "Results found",
+                              style: TextStyle(
+                                fontSize: 24,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 24),
+                          child: ListView(
+                            physics: BouncingScrollPhysics(),
+                            scrollDirection: Axis.vertical,
+                            children: buildProperties(),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-                GestureDetector(
-                  onTap: () {
-                    _showBottomSheet();
-                  },
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 16, right: 24),
-                    child: Text(
-                      "Filters",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
                       ),
-                    ),
+                    ],
                   ),
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(right: 24, left: 24, top: 24, bottom: 12),
-            child: Row(
-              children: [
-                Text(
-                  "53",
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+                  cancellationWidget: Text("Cancel"),
+                  emptyWidget: Center(
+                      child: Text(
+                    "No Results found",
+                    style: TextStyle(fontSize: 24.0),
+                  )),
+                  header: Row(
+                    children: <Widget>[
+                      RaisedButton(
+                        child: Text("sort"),
+                        onPressed: () {
+                          _searchBarController
+                              .sortList((Property a, Property b) {
+                            return a.price.compareTo(b.price);
+                          });
+                        },
+                      ),
+                      RaisedButton(
+                        child: Text("Desort"),
+                        onPressed: () {
+                          _searchBarController.removeSort();
+                        },
+                      ),
+                    ],
                   ),
+                  onCancelled: () {
+                    print("Cancelled triggered");
+                  },
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                  onItemFound: (Property property, int index) {
+                    return ListTile(
+                      title: buildProperty(property, index),
+                    );
+                  },
+                  searchBarStyle: SearchBarStyle(
+                      padding: EdgeInsets.all(10),
+                      borderRadius: BorderRadius.circular(10.0)),
+                  minimumChars: 4,
                 ),
-                SizedBox(
-                  width: 8,
-                ),
-                Text(
-                  "Results found",
-                  style: TextStyle(
-                    fontSize: 24,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 24),
-              child: ListView(
-                physics: BouncingScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                children: buildProperties(),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -197,6 +317,7 @@ class _SearchState extends State<Search> {
   Widget buildProperty(Property property, int index) {
     return GestureDetector(
       onTap: () {
+        print("property : $property");
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Detail(property: property)),
@@ -214,7 +335,7 @@ class _SearchState extends State<Search> {
           height: 210,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage(property.frontImage),
+              image: NetworkImage(property.frontImage),
               fit: BoxFit.cover,
             ),
           ),
@@ -246,7 +367,7 @@ class _SearchState extends State<Search> {
                   ),
                   child: Center(
                     child: Text(
-                      "FOR " + property.label,
+                      property.label,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 14,
