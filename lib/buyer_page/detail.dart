@@ -68,31 +68,6 @@ class Detail extends StatelessWidget {
                   child: Container(),
                 ),
                 Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.blue,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(5),
-                      ),
-                    ),
-                    width: 80,
-                    padding: EdgeInsets.symmetric(
-                      vertical: 4,
-                    ),
-                    child: Center(
-                      child: Text(
-                        property.label,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -164,26 +139,6 @@ class Detail extends StatelessWidget {
                           ),
                           Text(
                             property.sqm + " sq/m",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.star,
-                            color: Colors.yellow[700],
-                            size: 16,
-                          ),
-                          SizedBox(
-                            width: 4,
-                          ),
-                          Text(
-                            property.review + " Reviews",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
