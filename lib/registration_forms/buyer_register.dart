@@ -4,6 +4,7 @@ import 'package:chips_choice/chips_choice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:real_estate/buyer_page/search.dart';
 import 'package:real_estate/controller/buyer_controller.dart';
 import 'package:real_estate/modal/buyer_modal.dart';
 import 'package:real_estate/values/snackbar_msg.dart';
@@ -274,6 +275,8 @@ class _BuildFormState extends State<BuildForm> {
                   onPressed: () {
                     print("option: ${buyerOptionController.text}");
                     print("buyerType: ${buyerTypeController.text}");
+                    print(
+                        "start Budget: ${startBudgetController.text} end Budget :${endBudgetController.text}");
                     if (widget._formKey.currentState.validate()) {
                       setState(() {
                         progress = true;
@@ -307,6 +310,7 @@ class _BuildFormState extends State<BuildForm> {
                                   color: Colors.green,
                                   loginScaffoldKey: _scaffoldKey)
                               .getMessage();
+                          Navigator.pushNamed(context, Search.id);
                         } else {
                           setState(() {
                             progress = false;
@@ -319,6 +323,14 @@ class _BuildFormState extends State<BuildForm> {
                               .getMessage();
                         }
                       });
+                    } else {
+                      setState(() {
+                        progress = false;
+                      });
+                      SnackBarMessage(
+                          message: "Please submit again! Error Saving Data",
+                          color: Colors.red,
+                          loginScaffoldKey: _scaffoldKey);
                     }
                   },
                   child: Text(

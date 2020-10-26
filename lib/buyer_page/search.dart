@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:flappy_search_bar/flappy_search_bar.dart';
-import 'package:flappy_search_bar/scaled_tile.dart';
 import 'package:flappy_search_bar/search_bar_style.dart';
 import 'package:flutter/material.dart';
 import 'package:real_estate/controller/owner_controller.dart';
@@ -13,6 +10,7 @@ import 'detail.dart';
 import 'filter.dart';
 
 class Search extends StatefulWidget {
+  static const id = "SearchPage";
   @override
   _SearchState createState() => _SearchState();
 }
@@ -26,7 +24,6 @@ class _SearchState extends State<Search> {
   @override
   void initState() {
     super.initState();
-    properties.clear();
     //Owner Controller
     OwnerController().getFeedList().then((ownerData) {
       setState(() {
@@ -54,6 +51,7 @@ class _SearchState extends State<Search> {
             description: ownerData[i].amenity,
             frontImage: ownerData[i].imageLink,
             location: ownerData[i].location,
+            place: ownerData[i].place,
             price: ownerData[i].price,
             review: "4.5",
             sqm: ownerData[i].area,
@@ -77,6 +75,7 @@ class _SearchState extends State<Search> {
           description: realtorData[i].amenity,
           frontImage: realtorData[i].imageUrl,
           location: realtorData[i].location,
+          place: realtorData[i].place.split(' ')[0],
           price: realtorData[i].price,
           review: "4.5",
           sqm: realtorData[i].area,
@@ -91,6 +90,7 @@ class _SearchState extends State<Search> {
         ));
       }
     }
+    properties = properties.toSet().toList();
   }
 
   final SearchBarController<Property> _searchBarController =
@@ -311,7 +311,7 @@ class _SearchState extends State<Search> {
           tag: properties[i].frontImage,
           child: buildProperty(properties[i], i)));
     }
-    return list;
+    return list.toSet().toList();
   }
 
   Widget buildProperty(Property property, int index) {
@@ -354,28 +354,6 @@ class _SearchState extends State<Search> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(5),
-                    ),
-                  ),
-                  width: 80,
-                  padding: EdgeInsets.symmetric(
-                    vertical: 4,
-                  ),
-                  child: Center(
-                    child: Text(
-                      property.label,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ),
                 Expanded(
                   child: Container(),
                 ),
@@ -419,10 +397,10 @@ class _SearchState extends State<Search> {
                               width: 4,
                             ),
                             Text(
-                              property.location,
+                              property.place,
                               style: TextStyle(
                                 color: Colors.white,
-                                fontSize: 14,
+                                fontSize: 10,
                               ),
                             ),
                             SizedBox(
