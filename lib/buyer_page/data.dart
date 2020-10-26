@@ -10,6 +10,7 @@ class Property {
   String ownerImage;
   String ownerName;
   String contactNo;
+  String place;
   List<String> images;
 
   Property(
@@ -24,6 +25,7 @@ class Property {
       this.ownerImage,
       this.ownerName,
       this.contactNo,
+      this.place,
       this.images});
 }
 

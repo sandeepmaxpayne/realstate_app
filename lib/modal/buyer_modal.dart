@@ -34,8 +34,8 @@ class BuyerModal {
       "${json['plotOption']}",
       "${json['plotSize']}",
       "${json['buyerOption']}",
-      "${json['startingPrice']}",
-      "${json['endPrice']}",
+      "${json['startBudget']}",
+      "${json['endBudget']}",
     );
   }
 
@@ -49,7 +49,7 @@ class BuyerModal {
         'plotOption': plotOption,
         'plotSize': plotSize,
         'buyerOption': buyerOption,
-        'startingPrice': startBudget,
-        'endPrice': endBudget,
+        'startBudget': startBudget,
+        'endBudget': endBudget,
       };
 }

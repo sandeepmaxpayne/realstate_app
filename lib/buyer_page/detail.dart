@@ -1,13 +1,24 @@
+import 'package:chips_choice/chips_choice.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:real_estate/values/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'data.dart';
 
-class Detail extends StatelessWidget {
+class Detail extends StatefulWidget {
   final Property property;
 
   Detail({@required this.property});
+
+  @override
+  _DetailState createState() => _DetailState();
+}
+
+class _DetailState extends State<Detail> {
+  int tag = 0;
+
+  List<String> interest = ['not interested', 'interested'];
 
   @override
   Widget build(BuildContext context) {
@@ -17,12 +28,12 @@ class Detail extends StatelessWidget {
       body: Stack(
         children: [
           Hero(
-            tag: property.frontImage,
+            tag: widget.property.frontImage,
             child: Container(
               height: size.height * 0.5,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(property.frontImage),
+                  image: NetworkImage(widget.property.frontImage),
                   fit: BoxFit.cover,
                 ),
               ),
@@ -73,7 +84,7 @@ class Detail extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        property.name,
+                        widget.property.name,
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 32,
@@ -119,7 +130,7 @@ class Detail extends StatelessWidget {
                             width: 4,
                           ),
                           Text(
-                            property.location,
+                            widget.property.location,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -138,7 +149,7 @@ class Detail extends StatelessWidget {
                             width: 4,
                           ),
                           Text(
-                            property.sqm + " sq/m",
+                            widget.property.sqm + " sq/m",
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -170,7 +181,7 @@ class Detail extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(24),
+                      padding: EdgeInsets.all(18),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
@@ -178,9 +189,11 @@ class Detail extends StatelessWidget {
                             children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
                                 children: [
                                   Text(
-                                    property.ownerName,
+                                    widget.property.ownerName,
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -196,52 +209,35 @@ class Detail extends StatelessWidget {
                                       color: Colors.grey[500],
                                     ),
                                   ),
+                                  ChipsChoice<int>.single(
+                                    value: tag,
+                                    onChanged: (val) => setState(() {
+                                      tag = val;
+                                      // print(options[tag]);
+                                    }),
+                                    choiceItems: C2Choice.listFrom<int, String>(
+                                      source: interest,
+                                      value: (i, v) => i,
+                                      label: (i, v) => v,
+                                    ),
+                                  ),
+                                  tag == 1
+                                      ? InkWell(
+                                          onTap: () {},
+                                          child: Text(
+                                            'Chat with Admin',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                                fontSize: 15.0,
+                                                color: Colors.blueAccent),
+                                          ),
+                                        )
+                                      : Container(),
                                 ],
                               ),
                             ],
                           ),
                           //TODO Write the Phone No and link it to AutoLauncher
-                          Row(
-                            children: [
-                              Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.yellow[700].withOpacity(0.1),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: IconButton(
-                                    onPressed: () async {
-                                      final Uri _phoneLauncher = Uri(
-                                          scheme: 'tel',
-                                          path: property.contactNo);
-                                      launch(_phoneLauncher.toString());
-                                    },
-                                    icon: Icon(Icons.phone),
-                                    color: Colors.purple,
-                                    iconSize: 20,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                width: 16,
-                              ),
-                              Container(
-                                height: 50,
-                                width: 50,
-                                decoration: BoxDecoration(
-                                  color: Colors.yellow[700].withOpacity(0.1),
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: Image.asset(
-                                    'assets/icons/whatsapp_icon.png',
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
                         ],
                       ),
                     ),
@@ -282,40 +278,40 @@ class Detail extends StatelessWidget {
                         bottom: 24,
                       ),
                       child: Text(
-                        property.description,
+                        widget.property.description,
                         style: TextStyle(
                           fontSize: 16,
                           color: Colors.grey[500],
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        right: 24,
-                        left: 24,
-                        bottom: 16,
-                      ),
-                      child: Text(
-                        "Photos",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          bottom: 24,
-                        ),
-                        child: ListView(
-                          physics: BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          shrinkWrap: true,
-                          children: buildPhotos(property.images),
-                        ),
-                      ),
-                    ),
+//                    Padding(
+//                      padding: EdgeInsets.only(
+//                        right: 24,
+//                        left: 24,
+//                        bottom: 16,
+//                      ),
+//                      child: Text(
+//                        "Photos",
+//                        style: TextStyle(
+//                          fontSize: 20,
+//                          fontWeight: FontWeight.bold,
+//                        ),
+//                      ),
+//                    ),
+//                    Expanded(
+//                      child: Padding(
+//                        padding: EdgeInsets.only(
+//                          bottom: 24,
+//                        ),
+//                        child: ListView(
+//                          physics: BouncingScrollPhysics(),
+//                          scrollDirection: Axis.horizontal,
+//                          shrinkWrap: true,
+//                          children: buildPhotos(widget.property.images),
+//                        ),
+//                      ),
+//                    )
                   ],
                 ),
               ),

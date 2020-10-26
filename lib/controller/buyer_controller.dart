@@ -35,8 +35,7 @@ class BuyerController {
   Future<List<BuyerModal>> getFeedList() async {
     return await http.get(URL).then((response) {
       var jsonFeedResult = convert.jsonDecode(response.body) as List;
-      print(
-          "response: ${jsonFeedResult.map((v) => BuyerModal.fromJson(v).toJson())}");
+      // print("response: ${jsonFeedResult.map((v) => BuyerModal.fromJson(v).toJson())}");
 
       return jsonFeedResult.map((json) => BuyerModal.fromJson(json)).toList();
     });

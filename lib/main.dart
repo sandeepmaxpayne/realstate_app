@@ -1,6 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:real_estate/buyer_page/buyer_search_page.dart';
 import 'package:real_estate/change_phone_no/change_no.dart';
 import 'package:real_estate/registration/forgot_password.dart';
 import 'package:real_estate/registration/signIn_page.dart';
@@ -34,8 +33,8 @@ class RealEstateApp extends StatelessWidget {
           accentColor: Color(0xFF47B3FE),
           focusColor: Color(0xFF0084CA),
         ),
-        // initialRoute: LoginScreen.id,
-        home: Search(),
+        initialRoute: LoginScreen.id,
+        // home: Search(),
         routes: {
           "LoginScreen": (context) => LoginScreen(),
           "SignUpScreen": (context) => SignUp(),
@@ -44,6 +43,7 @@ class RealEstateApp extends StatelessWidget {
           "OwnerReg": (context) => OwnerRegister(),
           "BuyerReg": (context) => BuyerRegister(),
           "RealtorReg": (context) => RealtorRegister(),
+          "SearchPage": (context) => Search(),
         },
       ),
     );
