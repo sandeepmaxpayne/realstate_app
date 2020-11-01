@@ -1,6 +1,7 @@
 import 'package:chips_choice/chips_choice.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:real_estate/user_chat/chat.dart';
 import 'package:real_estate/values/styles.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -223,7 +224,10 @@ class _DetailState extends State<Detail> {
                                   ),
                                   tag == 1
                                       ? InkWell(
-                                          onTap: () {},
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                                context, ChatScreen.id);
+                                          },
                                           child: Text(
                                             'Chat with Admin',
                                             textAlign: TextAlign.center,

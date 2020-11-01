@@ -1,12 +1,23 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:real_estate/buyer_page/search.dart';
 import 'package:real_estate/card_view.dart';
 import 'package:real_estate/registration/signIn_page.dart';
 import 'package:real_estate/registration_forms/buyer_register.dart';
 import 'package:real_estate/registration_forms/owner_register.dart';
 import 'package:real_estate/registration_forms/realtor_register.dart';
+import 'package:real_estate/user_chat/change_email_address.dart';
+import 'package:real_estate/user_chat/chat.dart';
 import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'controller/buyer_controller.dart';
+import 'controller/owner_controller.dart';
+import 'controller/realtor_controller.dart';
+import 'modal/buyer_modal.dart';
+import 'modal/owner_modal.dart';
+import 'modal/realtor_modal.dart';
 
 class Home extends StatefulWidget {
   static final id = "home";
@@ -17,10 +28,14 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final _auth = FirebaseAuth.instance;
-  final TextEditingController userMobNo = new TextEditingController();
+  final TextEditingController userEmailAddress = new TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<OwnerModal> ownerData = List<OwnerModal>();
+  List<RealtorModal> realtorData = List<RealtorModal>();
+  List<BuyerModal> buyerData = List<BuyerModal>();
+  List<String> allUsersEmails = [];
 
   snackBarMessage(String message, Color color) {
     return _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -39,25 +54,28 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    getCurrentUser();
-  }
-
-  void getCurrentUser() {
-    /**   try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        var loggedInUser = user;
-        print('user email" ${loggedInUser.email}');
-      }
-    } catch (e) {
-      print(e);
-    } **/
+    OwnerController().getFeedList().then((ownerData) {
+      setState(() {
+        this.ownerData = ownerData;
+      });
+    });
+    RealtorController().getFeedList().then((realtorData) {
+      setState(() {
+        this.realtorData = realtorData;
+      });
+    });
+    BuyerController().getFeedList().then((buyerData) {
+      setState(() {
+        this.buyerData = buyerData;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: Theme.of(context).primaryColor,
@@ -87,17 +105,18 @@ class _HomeState extends State<Home> {
               child: Text(''),
               decoration: BoxDecoration(
                 color: Theme.of(context).primaryColor,
-//                image: DecorationImage(
-//                    image: AssetImage("image/logo.png"), fit: BoxFit.fill),
+                image: DecorationImage(
+                    image: AssetImage("assets/icons/playstore.png"),
+                    fit: BoxFit.fill),
               ),
             ),
             ListTile(
-              title: Text('Notification'),
+              title: Text('See Real Estate'),
               leading: Icon(
-                Icons.notifications,
+                Icons.domain,
               ),
               onTap: () {
-                //TODO message
+                Navigator.pushNamed(context, Search.id);
               },
             ),
             ListTile(
@@ -123,7 +142,7 @@ class _HomeState extends State<Home> {
               leading: Icon(Icons.security),
               onTap: () async {
                 const _privacyPolicuUrl =
-                    "https://docs.google.com/document/d/1WNnhbG_E5wyE3pTPOMxJxtjev1opbbhDWVQR0ijm-7o/edit?usp=sharing";
+                    "https://docs.google.com/document/d/1dTqU9kGESAcpbe0JcD76oGRo9QfvQ-q6_9O66AT56kk/edit?usp=sharing";
                 if (await canLaunch(_privacyPolicuUrl)) {
                   await launch(_privacyPolicuUrl);
                 } else {
@@ -181,31 +200,6 @@ class _HomeState extends State<Home> {
             title2: 'buyer',
             desc: 'none',
           ),
-
-          /**  RaisedButton(
-                  onPressed: () async {
-                  GroupChatController().getFeedList().then((groupChatLink) {
-                  setState(() {
-                  this.groupChatLink = groupChatLink;
-                  print("grouplink:${groupChatLink[0].whatsAppLink}");
-                  });
-                  });
-                  if (groupChatLink.isNotEmpty) {
-                  String chatLink = groupChatLink[0].whatsAppLink;
-                  if (await canLaunch(chatLink)) {
-                  await launch(chatLink);
-                  } else {
-                  throw snackBarMessage("No group chat scheduled by doctor !",
-                  Colors.yellow.shade300);
-                  }
-                  } else {
-                  snackBarMessage(
-                  "No group chat scheduled !", Colors.yellow.shade300);
-                  }
-                  },
-                  color: Color(0xFFFFE97D),
-                  child: Text("Start Group Chat"),
-                  ), **/
         ],
       )),
     );
@@ -224,20 +218,18 @@ class _HomeState extends State<Home> {
                 child: Form(
                   key: _formKey,
                   child: TextFormField(
-                    keyboardType: TextInputType.number,
+                    keyboardType: TextInputType.emailAddress,
                     validator: (value) {
                       if (value.isEmpty) {
-                        return "This cannot be empty !";
-                      } else if (value.length != 10) {
-                        return "Enter your 10 digit mobile No to Chat";
+                        return "Owner/Realtor/Buyer email !";
                       }
                       return null;
                     },
-                    controller: userMobNo,
+                    controller: userEmailAddress,
                     autofocus: true,
                     decoration: InputDecoration(
-                        labelText: 'Mobile No',
-                        hintText: 'Enter your Registered Mobile No',
+                        labelText: 'email address',
+                        hintText: 'Enter realtor/owner/buyer email',
                         hintStyle:
                             TextStyle(fontSize: 15.0, color: Colors.black45)),
                   ),
@@ -255,7 +247,31 @@ class _HomeState extends State<Home> {
             FlatButton(
               child: Text('OPEN'),
               onPressed: () {
-                //TODO
+                for (int i = 0; i < ownerData.length - 1; i++) {
+                  allUsersEmails.add(ownerData[i].email);
+                }
+                for (int i = 0; i < realtorData.length - 1; i++) {
+                  allUsersEmails.add(realtorData[i].email);
+                }
+                for (var i = 0; i < buyerData.length - 1; i++) {
+                  allUsersEmails.add(buyerData[i].email);
+                }
+
+                print("AllUsersEmail: ${allUsersEmails.toSet().toList()}");
+                print("user email: ${userEmailAddress.text}");
+                if (_formKey.currentState.validate()) {
+                  if (allUsersEmails
+                      .toSet()
+                      .toList()
+                      .contains(userEmailAddress.text)) {
+                    Provider.of<ChangeEmailAddress>(context, listen: false)
+                        .changeData(userEmailAddress.text);
+                    Navigator.pushNamed(context, ChatScreen.id);
+                  } else {
+                    Navigator.pop(context);
+                  }
+                  // Navigator.pop(context);
+                }
               },
             )
           ],
