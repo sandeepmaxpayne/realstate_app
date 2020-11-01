@@ -8,9 +8,9 @@ import 'package:flutter/services.dart';
 import 'package:path/path.dart' as p;
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 import 'package:provider/provider.dart';
-import 'package:real_estate/change_phone_no/change_no.dart';
 import 'package:real_estate/controller/owner_controller.dart';
 import 'package:real_estate/modal/owner_modal.dart';
+import 'package:real_estate/user_chat/change_email_address.dart';
 import 'package:real_estate/values/snackbar_msg.dart';
 import 'package:real_estate/values/styles.dart';
 

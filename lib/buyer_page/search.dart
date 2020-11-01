@@ -24,6 +24,7 @@ class _SearchState extends State<Search> {
   @override
   void initState() {
     super.initState();
+
     //Owner Controller
     OwnerController().getFeedList().then((ownerData) {
       setState(() {
@@ -111,9 +112,14 @@ class _SearchState extends State<Search> {
   Widget build(BuildContext context) {
     getRealTimePropertyList();
     print("properties 1: $properties");
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
+        appBar: AppBar(
+          title: Text("Search Property"),
+          centerTitle: true,
+        ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -305,12 +311,18 @@ class _SearchState extends State<Search> {
   }
 
   List<Widget> buildProperties() {
-    List<Widget> list = [];
+    List<Widget> list = List<Widget>();
+    list.clear();
+    //  properties.clear();
+    realtorData.clear();
+    ownerData.clear();
+
     for (var i = 0; i < properties.length; i++) {
       list.add(Hero(
           tag: properties[i].frontImage,
           child: buildProperty(properties[i], i)));
     }
+    print("list items: ${list.toSet().toList().length}");
     return list.toSet().toList();
   }
 
