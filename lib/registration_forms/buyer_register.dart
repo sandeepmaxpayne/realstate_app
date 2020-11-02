@@ -285,7 +285,7 @@ class _BuildFormState extends State<BuildForm> {
                       BuyerModal buyerForm = BuyerModal(
                           nameController.text,
                           phoneNoController.text,
-                          emailController.text,
+                          emailController.text.trim(),
                           locationController.text,
                           placeController.text,
                           buyerOptionController.text,

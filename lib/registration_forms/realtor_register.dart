@@ -412,7 +412,7 @@ class _BuildFormState extends State<BuildForm> {
                             realtorImageController.text,
                             realtorName.text,
                             realtorPhoneNo.text,
-                            realtorEmail.text,
+                            realtorEmail.text.trim(),
                             realtorOtherDoc.text,
                             realtorLocation.text,
                             realtorPlace.text,

@@ -413,7 +413,7 @@ class _BuildFormState extends State<BuildForm> {
                           ownerImageController.text,
                           nameOwnerController.text,
                           phoneNoOwnerController.text,
-                          emailOwnerController.text,
+                          emailOwnerController.text.trim(),
                           otherDocOwnerController.text,
                           locationOwnerController.text,
                           placeOwnerController.text,

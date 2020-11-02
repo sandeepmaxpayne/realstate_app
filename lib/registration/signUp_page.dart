@@ -317,7 +317,7 @@ class _SignUpState extends State<SignUp> {
                 }
                 if (_verify() && onCheck == true) {
                   UserModal feedForm =
-                      UserModal(name, registerEmail, phoneNo, address);
+                      UserModal(name, registerEmail.trim(), phoneNo, address);
 
                   UserController formController = UserController();
 
@@ -326,7 +326,8 @@ class _SignUpState extends State<SignUp> {
                   });
                   try {
                     final user = await _auth.createUserWithEmailAndPassword(
-                        email: registerEmail, password: registerPassword);
+                        email: registerEmail.trim(),
+                        password: registerPassword);
                     //store data to sheet
                     formController.submitForm(feedForm, (String response) {
                       print("response: $response");
@@ -354,7 +355,7 @@ class _SignUpState extends State<SignUp> {
                         showSpinner = false;
                       });
                       Provider.of<ChangeEmailAddress>(context, listen: false)
-                          .changeData(registerEmail);
+                          .changeData(registerEmail.trim());
                       Navigator.pushNamed(context, Home.id);
                     }
                   } catch (e) {

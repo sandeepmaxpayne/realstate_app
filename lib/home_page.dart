@@ -248,24 +248,24 @@ class _HomeState extends State<Home> {
               child: Text('OPEN'),
               onPressed: () {
                 for (int i = 0; i < ownerData.length - 1; i++) {
-                  allUsersEmails.add(ownerData[i].email);
+                  allUsersEmails.add(ownerData[i].email.trim());
                 }
                 for (int i = 0; i < realtorData.length - 1; i++) {
-                  allUsersEmails.add(realtorData[i].email);
+                  allUsersEmails.add(realtorData[i].email.trim());
                 }
                 for (var i = 0; i < buyerData.length - 1; i++) {
-                  allUsersEmails.add(buyerData[i].email);
+                  allUsersEmails.add(buyerData[i].email.trim());
                 }
 
                 print("AllUsersEmail: ${allUsersEmails.toSet().toList()}");
-                print("user email: ${userEmailAddress.text}");
+                print("user email: ${userEmailAddress.text.trim()}");
                 if (_formKey.currentState.validate()) {
                   if (allUsersEmails
                       .toSet()
                       .toList()
-                      .contains(userEmailAddress.text)) {
+                      .contains(userEmailAddress.text.trim())) {
                     Provider.of<ChangeEmailAddress>(context, listen: false)
-                        .changeData(userEmailAddress.text);
+                        .changeData(userEmailAddress.text.trim());
                     Navigator.pushNamed(context, ChatScreen.id);
                   } else {
                     Navigator.pop(context);

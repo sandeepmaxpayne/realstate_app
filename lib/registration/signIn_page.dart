@@ -199,13 +199,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   try {
                     final logUser = await auth.signInWithEmailAndPassword(
-                        email: loginEmail, password: loginPassword);
+                        email: loginEmail.trim(), password: loginPassword);
                     if (logUser != null) {
                       setState(() {
                         progress = false;
                       });
                       Provider.of<ChangeEmailAddress>(context, listen: false)
-                          .changeData(loginEmail);
+                          .changeData(loginEmail.trim());
                       Navigator.pushNamed(context, Home.id);
                     }
                   } catch (e) {

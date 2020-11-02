@@ -152,12 +152,13 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   });
 
                   try {
-                    await auth.sendPasswordResetEmail(email: loginEmail);
+                    await auth.sendPasswordResetEmail(email: loginEmail.trim());
                     setState(() {
                       progress = false;
                     });
                     SnackBarMessage(
-                            message: 'Reset Password sent to your $loginEmail',
+                            message:
+                                'Reset Password sent to your ${loginEmail.trim()}',
                             color: Colors.green,
                             loginScaffoldKey: _loginScaffoldKey)
                         .getMessage();
