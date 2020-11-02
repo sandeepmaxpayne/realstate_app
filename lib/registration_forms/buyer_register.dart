@@ -24,6 +24,44 @@ class BuyerRegister extends StatelessWidget {
           style: TextStyle(color: Colors.black),
         ),
         centerTitle: true,
+        actions: [
+          Builder(
+            builder: (context) => IconButton(
+              icon: Icon(
+                Icons.search,
+                color: Colors.black,
+                semanticLabel: 'Search Property',
+              ),
+              onPressed: () => Scaffold.of(context).openEndDrawer(),
+              tooltip: MaterialLocalizations.of(context).openAppDrawerTooltip,
+            ),
+          )
+        ],
+      ),
+      endDrawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              child: Text(''),
+              decoration: BoxDecoration(
+                color: Theme.of(context).primaryColor,
+                image: DecorationImage(
+                    image: AssetImage("assets/icons/playstore.png"),
+                    fit: BoxFit.fill),
+              ),
+            ),
+            ListTile(
+              title: Text('See Real Estate'),
+              leading: Icon(
+                Icons.domain,
+              ),
+              onTap: () {
+                Navigator.pushNamed(context, Search.id);
+              },
+            ),
+          ],
+        ),
       ),
       body: Container(
         padding: EdgeInsets.all(10.0),

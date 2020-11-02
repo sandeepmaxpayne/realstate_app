@@ -111,15 +111,6 @@ class _HomeState extends State<Home> {
               ),
             ),
             ListTile(
-              title: Text('See Real Estate'),
-              leading: Icon(
-                Icons.domain,
-              ),
-              onTap: () {
-                Navigator.pushNamed(context, Search.id);
-              },
-            ),
-            ListTile(
               title: Text('share'),
               leading: Icon(Icons.share),
               onTap: () {
