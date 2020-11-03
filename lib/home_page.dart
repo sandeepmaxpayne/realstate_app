@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:real_estate/buyer_page/search.dart';
 import 'package:real_estate/card_view.dart';
 import 'package:real_estate/registration/signIn_page.dart';
 import 'package:real_estate/registration_forms/buyer_register.dart';
@@ -172,16 +171,16 @@ class _HomeState extends State<Home> {
               Navigator.pushNamed(context, OwnerRegister.id);
             },
             title1: 'Owner',
-            title2: 'Owner of the products',
-            desc: 'short descp',
+            title2: 'Owner of the property',
+            desc: '',
           ),
           ChatCard(
             onPress: () {
               Navigator.pushNamed(context, RealtorRegister.id);
             },
             title1: 'Realtor',
-            title2: 'short title',
-            desc: 'short descp',
+            title2: 'real estate agent',
+            desc: '',
           ),
           ChatCard(
             onPress: () {
@@ -189,7 +188,7 @@ class _HomeState extends State<Home> {
             },
             title1: 'Buyer',
             title2: 'buyer',
-            desc: 'none',
+            desc: '',
           ),
         ],
       )),

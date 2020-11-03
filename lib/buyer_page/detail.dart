@@ -32,7 +32,11 @@ class _DetailState extends State<Detail> {
               height: size.height * 0.5,
               decoration: BoxDecoration(
                 image: DecorationImage(
-                  image: NetworkImage(widget.property.frontImage),
+                  image: NetworkImage(widget.property.frontImage)
+                          .toString()
+                          .contains('http')
+                      ? NetworkImage(widget.property.frontImage)
+                      : AssetImage('assets/images/default_property.jpg'),
                   fit: BoxFit.cover,
                 ),
               ),

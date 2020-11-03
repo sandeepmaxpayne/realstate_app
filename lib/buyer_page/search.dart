@@ -1,8 +1,10 @@
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flappy_search_bar/search_bar_style.dart';
 import 'package:flutter/material.dart';
+import 'package:real_estate/controller/admin_add_property_controller.dart';
 import 'package:real_estate/controller/owner_controller.dart';
 import 'package:real_estate/controller/realtor_controller.dart';
+import 'package:real_estate/modal/admin_add_property_modal.dart';
 import 'package:real_estate/modal/owner_modal.dart';
 import 'package:real_estate/modal/realtor_modal.dart';
 import 'data.dart';
@@ -21,6 +23,7 @@ class _SearchState extends State<Search> {
   List<Property> properties = [];
   List<OwnerModal> ownerData = List<OwnerModal>();
   List<RealtorModal> realtorData = List<RealtorModal>();
+  List<AdminAddPropertyModal> adminData = List<AdminAddPropertyModal>();
   @override
   void initState() {
     super.initState();
@@ -37,6 +40,13 @@ class _SearchState extends State<Search> {
       setState(() {
         this.realtorData = realtorData;
         print("realtor Data: ${realtorData[0].toJson()}");
+      });
+    });
+    //AddAdminProperty Controller
+    AdminAddPropertyController().getFeedList().then((adminData) {
+      setState(() {
+        this.adminData = adminData;
+        print("admin Data: ${adminData[0].toJson()}");
       });
     });
   }
@@ -91,6 +101,31 @@ class _SearchState extends State<Search> {
         ));
       }
     }
+    // Add AddAdminProperty Data List to Property List
+    if (adminData.length > 1) {
+      for (int i = 0; i < adminData.length - 1; i++) {
+        properties.add(Property(
+          label: "ADMIN",
+          ownerName: adminData[i].name,
+          name: adminData[i].option,
+          description: adminData[i].amenity,
+          frontImage: adminData[i].imageLink,
+          location: adminData[i].location,
+          place: adminData[i].place.split(' ')[0],
+          price: adminData[i].price,
+          review: "4.5",
+          sqm: adminData[i].area,
+          contactNo: adminData[i].phoneNo,
+          images: [
+            "assets/images/kitchen.jpg",
+            "assets/images/bath_room.jpg",
+            "assets/images/swimming_pool.jpg",
+            "assets/images/bed_room.jpg",
+            "assets/images/living_room.jpg",
+          ],
+        ));
+      }
+    }
     properties = properties.toSet().toList();
   }
 
@@ -103,10 +138,10 @@ class _SearchState extends State<Search> {
     List<Property> posts = [];
 
     for (int i = 0; i < properties.length; i++) {
-      if (text == properties[i].location ||
-          text == properties[i].name ||
-          text == properties[i].place ||
-          text == properties[i].ownerName) {
+      if (text.toLowerCase() == properties[i].location.toLowerCase() ||
+          text.toLowerCase() == properties[i].name.toLowerCase() ||
+          text.toLowerCase() == properties[i].place.toLowerCase() ||
+          text.toLowerCase() == properties[i].ownerName.toLowerCase()) {
         posts.add(properties[i]);
       }
     }
@@ -320,6 +355,7 @@ class _SearchState extends State<Search> {
     //  properties.clear();
     realtorData.clear();
     ownerData.clear();
+    adminData.clear();
 
     for (var i = 0; i < properties.length; i++) {
       list.add(Hero(
@@ -351,7 +387,10 @@ class _SearchState extends State<Search> {
           height: 210,
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: NetworkImage(property.frontImage),
+              image:
+                  NetworkImage(property.frontImage).toString().contains('http')
+                      ? NetworkImage(property.frontImage)
+                      : AssetImage('assets/images/default_property.jpg'),
               fit: BoxFit.cover,
             ),
           ),
