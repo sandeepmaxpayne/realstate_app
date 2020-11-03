@@ -2,8 +2,6 @@ import 'package:chips_choice/chips_choice.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:real_estate/user_chat/chat.dart';
-import 'package:real_estate/values/styles.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import 'data.dart';
 
@@ -179,7 +177,7 @@ class _DetailState extends State<Detail> {
               child: Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Padding(
                       padding: EdgeInsets.all(18),
@@ -245,22 +243,22 @@ class _DetailState extends State<Detail> {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        right: 24,
-                        left: 24,
-                        bottom: 24,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          buildFeature(Icons.hotel, "3 Bedroom"),
-                          buildFeature(Icons.wc, "2 Bathroom"),
-                          buildFeature(Icons.kitchen, "1 Kitchen"),
-                          buildFeature(Icons.local_parking, "2 Parking"),
-                        ],
-                      ),
-                    ),
+//                    Padding(
+//                      padding: EdgeInsets.only(
+//                        right: 24,
+//                        left: 24,
+//                        bottom: 24,
+//                      ),
+//                      child: Row(
+//                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                        children: [
+//                          buildFeature(Icons.hotel, "3 Bedroom"),
+//                          buildFeature(Icons.wc, "2 Bathroom"),
+//                          buildFeature(Icons.kitchen, "1 Kitchen"),
+//                          buildFeature(Icons.local_parking, "2 Parking"),
+//                        ],
+//                      ),
+//                    ),
                     Padding(
                       padding: EdgeInsets.only(
                         right: 24,

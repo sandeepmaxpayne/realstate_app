@@ -103,7 +103,12 @@ class _SearchState extends State<Search> {
     List<Property> posts = [];
 
     for (int i = 0; i < properties.length; i++) {
-      posts.add(properties[i]);
+      if (text == properties[i].location ||
+          text == properties[i].name ||
+          text == properties[i].place ||
+          text == properties[i].ownerName) {
+        posts.add(properties[i]);
+      }
     }
     return posts;
   }
@@ -112,7 +117,6 @@ class _SearchState extends State<Search> {
   Widget build(BuildContext context) {
     getRealTimePropertyList();
     print("properties 1: $properties");
-
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -417,40 +421,6 @@ class _SearchState extends State<Search> {
                             ),
                             SizedBox(
                               width: 8,
-                            ),
-                            Icon(
-                              Icons.zoom_out_map,
-                              color: Colors.white,
-                              size: 16,
-                            ),
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              property.sqm + " sq/m",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            Icon(
-                              Icons.star,
-                              color: Colors.yellow[700],
-                              size: 14,
-                            ),
-                            SizedBox(
-                              width: 4,
-                            ),
-                            Text(
-                              property.review + " Reviews",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 14,
-                              ),
                             ),
                           ],
                         ),
