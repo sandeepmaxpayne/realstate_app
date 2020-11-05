@@ -110,7 +110,7 @@ class _BuildFormState extends State<BuildForm> {
   String operationText = '';
   File file;
   bool isUploaded = true;
-  var selectedRange = RangeValues(5000000, 50000000);
+  var selectedRange = RangeValues(500000, 2000000);
   TextEditingController startBudgetController = TextEditingController();
   TextEditingController endBudgetController = TextEditingController();
   TextEditingController buyerOptionController = TextEditingController();
@@ -299,8 +299,8 @@ class _BuildFormState extends State<BuildForm> {
                       print('selected range: $selectedRange');
                     });
                   },
-                  min: 1000000.0,
-                  max: 1000000000.0,
+                  min: 100000.0,
+                  max: 10000000.0,
                   divisions: 100,
                   values: selectedRange,
                   activeColor: Theme.of(context).primaryColor,

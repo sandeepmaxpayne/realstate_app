@@ -15,7 +15,7 @@ class Detail extends StatefulWidget {
 }
 
 class _DetailState extends State<Detail> {
-  int tag = 0;
+  int tagChange = 0;
 
   List<String> interest = ['not interested', 'interested'];
 
@@ -152,7 +152,7 @@ class _DetailState extends State<Detail> {
                             width: 4,
                           ),
                           Text(
-                            widget.property.sqm + " sq/m",
+                            widget.property.sqm,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -213,9 +213,9 @@ class _DetailState extends State<Detail> {
                                     ),
                                   ),
                                   ChipsChoice<int>.single(
-                                    value: tag,
+                                    value: tagChange,
                                     onChanged: (val) => setState(() {
-                                      tag = val;
+                                      tagChange = val;
                                       // print(options[tag]);
                                     }),
                                     choiceItems: C2Choice.listFrom<int, String>(
@@ -224,7 +224,7 @@ class _DetailState extends State<Detail> {
                                       label: (i, v) => v,
                                     ),
                                   ),
-                                  tag == 1
+                                  tagChange == 1
                                       ? InkWell(
                                           onTap: () {
                                             Navigator.pushNamed(
