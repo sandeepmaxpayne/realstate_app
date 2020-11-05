@@ -132,16 +132,16 @@ class _SearchState extends State<Search> {
   final SearchBarController<Property> _searchBarController =
       SearchBarController();
   Future<List<Property>> _getALlPosts(String text) async {
-    await Future.delayed(Duration(seconds: text.length == 4 ? 5 : 1));
+    await Future.delayed(Duration(seconds: text.length == 3 ? 5 : 1));
 
     if (text.length > 15) throw Error();
     List<Property> posts = [];
 
     for (int i = 0; i < properties.length; i++) {
-      if (text.toLowerCase() == properties[i].location.toLowerCase() ||
-          text.toLowerCase() == properties[i].name.toLowerCase() ||
-          text.toLowerCase() == properties[i].place.toLowerCase() ||
-          text.toLowerCase() == properties[i].ownerName.toLowerCase()) {
+      if (properties[i].location.toLowerCase().contains(text.toLowerCase()) ||
+          properties[i].name.toLowerCase().contains(text.toLowerCase()) ||
+          properties[i].place.toLowerCase().contains(text.toLowerCase()) ||
+          properties[i].ownerName.toLowerCase().contains(text.toLowerCase())) {
         posts.add(properties[i]);
       }
     }
@@ -315,7 +315,7 @@ class _SearchState extends State<Search> {
                   searchBarStyle: SearchBarStyle(
                       padding: EdgeInsets.all(10),
                       borderRadius: BorderRadius.circular(10.0)),
-                  minimumChars: 4,
+                  minimumChars: 3,
                 ),
               ),
             ),

@@ -73,6 +73,9 @@ class _BuildFormState extends State<BuildForm> {
   String operationText = '';
   File file;
   bool isUploaded = true;
+  File optionalFile;
+  String optionalFileName = '';
+
   TextEditingController realtorImageController = TextEditingController();
   TextEditingController realtorOptionController = TextEditingController();
   TextEditingController realtorName = TextEditingController();
@@ -85,7 +88,6 @@ class _BuildFormState extends State<BuildForm> {
   TextEditingController realtorPrice = TextEditingController();
   TextEditingController realtorAmenity = TextEditingController();
 
-  int uploadNo = 0;
   Future filePicker(BuildContext context) async {
     try {
       if (fileType == 'others') {
@@ -99,9 +101,24 @@ class _BuildFormState extends State<BuildForm> {
         });
         print('file name: $fileName');
         //  _uploadFile(file, fileName);
-        if (uploadNo == 2) {
-          _uploadOptionalDocument(file, fileName);
-        }
+      }
+    } on PlatformException catch (e) {
+      snackBarMessage('Unsupported Exception: $e', Colors.red);
+    }
+  }
+
+  Future optionalFilePicker(BuildContext context) async {
+    try {
+      if (fileType == 'others') {
+        optionalFile = await FilePicker.getFile(
+          type: FileType.any,
+        );
+
+        optionalFileName = p.basename(file.path);
+        setState(() {
+          optionalFileName = p.basename(file.path);
+        });
+        print('file name: $optionalFileName');
       }
     } on PlatformException catch (e) {
       snackBarMessage('Unsupported Exception: $e', Colors.red);
@@ -122,7 +139,8 @@ class _BuildFormState extends State<BuildForm> {
     realtorImageController.text = url;
   }
 
-  Future<void> _uploadOptionalDocument(File file, String fileName) async {
+  Future<void> _uploadOptionalDocument(
+      File optionalFile, String optionalFileName) async {
     StorageReference storageReference;
 
     if (fileType == 'others') {
@@ -263,10 +281,9 @@ class _BuildFormState extends State<BuildForm> {
                           trailing: Icon(Icons.attach_file),
                           onTap: () {
                             setState(() {
-                              uploadNo = 2;
                               fileType = 'others';
                             });
-                            filePicker(context);
+                            optionalFilePicker(context);
                           },
                         ),
                       ),
@@ -274,7 +291,7 @@ class _BuildFormState extends State<BuildForm> {
                         child: TextFormField(
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: fileName,
+                            hintText: optionalFileName,
                           ),
                           readOnly: true,
                           showCursor: false,
@@ -404,10 +421,63 @@ class _BuildFormState extends State<BuildForm> {
                     if (widget._formKey.currentState.validate()) {
                       //upload the file image
                       _uploadFile(file, fileName);
+                      if (optionalFileName.isNotEmpty && optionalFile != null) {
+                        _uploadOptionalDocument(optionalFile, optionalFileName);
+                      }
                       setState(() {
                         progress = true;
                       });
-                      if (realtorImageController.text.length > 5) {
+
+                      if (realtorImageController.text.length > 5 &&
+                          realtorOtherDoc.text.length > 5 &&
+                          fileName.isNotEmpty &&
+                          optionalFileName.isNotEmpty) {
+                        RealtorModal realtorForm = RealtorModal(
+                            realtorImageController.text,
+                            realtorName.text,
+                            realtorPhoneNo.text,
+                            realtorEmail.text.trim(),
+                            realtorOtherDoc.text,
+                            realtorLocation.text,
+                            realtorPlace.text,
+                            realtorOptionController.text,
+                            realtorArea.text,
+                            realtorPrice.text,
+                            realtorAmenity.text);
+                        RealtorController realtorController =
+                            RealtorController();
+
+                        //store data to sheet
+                        realtorController.submitForm(realtorForm,
+                            (String response) {
+                          print("response: $response");
+                          if (response == RealtorController.STATUS_SUCCESS) {
+                            //data saved successfully in google sheets
+                            setState(() {
+                              progress = false;
+                            });
+                            print(
+                                "data recorded successfully ${realtorForm.toJson()}");
+                            SnackBarMessage(
+                                    message: "Data recorded successfully",
+                                    color: Colors.green,
+                                    loginScaffoldKey: _scaffoldKey)
+                                .getMessage();
+                          } else {
+                            setState(() {
+                              progress = false;
+                            });
+                            print("error saving data");
+                            SnackBarMessage(
+                                    message: "Error Saving Data!",
+                                    color: Colors.red,
+                                    loginScaffoldKey: _scaffoldKey)
+                                .getMessage();
+                          }
+                        });
+                      } else if (realtorImageController.text.length > 5 &&
+                          fileName.isNotEmpty &&
+                          optionalFileName.isEmpty) {
                         RealtorModal realtorForm = RealtorModal(
                             realtorImageController.text,
                             realtorName.text,
@@ -456,9 +526,11 @@ class _BuildFormState extends State<BuildForm> {
                           progress = false;
                         });
                         SnackBarMessage(
-                            message: "Please submit again! Error Saving Data",
-                            color: Colors.red,
-                            loginScaffoldKey: _scaffoldKey);
+                                message:
+                                    "Please submit again! Error Saving Data",
+                                color: Colors.red,
+                                loginScaffoldKey: _scaffoldKey)
+                            .getMessage();
                       }
                     }
                   },
