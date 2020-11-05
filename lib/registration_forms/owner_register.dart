@@ -71,8 +71,11 @@ class _BuildFormState extends State<BuildForm> {
 
   String fileType = '';
   String fileName = '';
+  String optionalFileName = '';
   String operationText = '';
   File file;
+  File optionalFile;
+
   bool isUploaded = true;
   TextEditingController ownerImageController = TextEditingController();
   TextEditingController ownerOptionController = TextEditingController();
@@ -86,7 +89,6 @@ class _BuildFormState extends State<BuildForm> {
   TextEditingController priceOwnerController = TextEditingController();
   TextEditingController amenityOwnerController = TextEditingController();
 
-  int uploadNo = 0;
   Future filePicker(BuildContext context) async {
     try {
       if (fileType == 'others') {
@@ -100,9 +102,24 @@ class _BuildFormState extends State<BuildForm> {
         });
         print('file name: $fileName');
         //  _uploadFile(file, fileName);
-        if (uploadNo == 2) {
-          _uploadOptionalDocument(file, fileName);
-        }
+      }
+    } on PlatformException catch (e) {
+      snackBarMessage('Unsupported Exception: $e', Colors.red);
+    }
+  }
+
+  Future optionalFilePicker(BuildContext context) async {
+    try {
+      if (fileType == 'others') {
+        optionalFile = await FilePicker.getFile(
+          type: FileType.any,
+        );
+
+        optionalFileName = p.basename(file.path);
+        setState(() {
+          optionalFileName = p.basename(file.path);
+        });
+        print('file name: $optionalFileName');
       }
     } on PlatformException catch (e) {
       snackBarMessage('Unsupported Exception: $e', Colors.red);
@@ -123,14 +140,15 @@ class _BuildFormState extends State<BuildForm> {
     ownerImageController.text = url;
   }
 
-  Future<void> _uploadOptionalDocument(File file, String fileName) async {
+  Future<void> _uploadOptionalDocument(
+      File optionalFile, String optionalFileName) async {
     StorageReference storageReference;
 
     if (fileType == 'others') {
       storageReference = FirebaseStorage.instance.ref().child(
-          'owner/${Provider.of<ChangeEmailAddress>(context, listen: false).emailAddress}/$fileName');
+          'owner/${Provider.of<ChangeEmailAddress>(context, listen: false).emailAddress}/$optionalFileName');
     }
-    final StorageUploadTask uploadTask = storageReference.putFile(file);
+    final StorageUploadTask uploadTask = storageReference.putFile(optionalFile);
     final StorageTaskSnapshot downloadUrl = (await uploadTask.onComplete);
     final String url = (await downloadUrl.ref.getDownloadURL());
     print("Optional Url is $url");
@@ -264,10 +282,9 @@ class _BuildFormState extends State<BuildForm> {
                           trailing: Icon(Icons.attach_file),
                           onTap: () {
                             setState(() {
-                              uploadNo = 2;
                               fileType = 'others';
                             });
-                            filePicker(context);
+                            optionalFilePicker(context);
                           },
                         ),
                       ),
@@ -275,7 +292,7 @@ class _BuildFormState extends State<BuildForm> {
                         child: TextFormField(
                           decoration: InputDecoration(
                             border: InputBorder.none,
-                            hintText: fileName,
+                            hintText: optionalFileName,
                           ),
                           readOnly: true,
                           showCursor: false,
@@ -407,8 +424,60 @@ class _BuildFormState extends State<BuildForm> {
                         progress = true;
                       });
                       _uploadFile(file, fileName);
+                      if (optionalFileName.isNotEmpty && optionalFile != null) {
+                        _uploadOptionalDocument(optionalFile, optionalFileName);
+                      }
 
-                      if (ownerImageController.text.length > 5) {
+                      if (ownerImageController.text.length > 5 &&
+                          otherDocOwnerController.text.length > 5 &&
+                          fileName.isNotEmpty &&
+                          optionalFileName.isNotEmpty) {
+                        OwnerModal ownerForm = OwnerModal(
+                          ownerImageController.text,
+                          nameOwnerController.text,
+                          phoneNoOwnerController.text,
+                          emailOwnerController.text.trim(),
+                          otherDocOwnerController.text,
+                          locationOwnerController.text,
+                          placeOwnerController.text,
+                          ownerOptionController.text,
+                          areaOwnerController.text,
+                          priceOwnerController.text,
+                          amenityOwnerController.text,
+                        );
+                        OwnerController ownerController = OwnerController();
+
+                        //store data to sheet
+                        ownerController.submitForm(ownerForm,
+                            (String response) {
+                          print("response: $response");
+                          if (response == OwnerController.STATUS_SUCCESS) {
+                            //data saved successfully in google sheets
+                            setState(() {
+                              progress = false;
+                            });
+                            print(
+                                "data recorded successfully ${ownerForm.toJson()}");
+                            SnackBarMessage(
+                                    message: "Data recorded successfully",
+                                    color: Colors.green,
+                                    loginScaffoldKey: _scaffoldKey)
+                                .getMessage();
+                          } else {
+                            setState(() {
+                              progress = false;
+                            });
+                            print("error saving data");
+                            SnackBarMessage(
+                                    message: "Error Saving Data!",
+                                    color: Colors.red,
+                                    loginScaffoldKey: _scaffoldKey)
+                                .getMessage();
+                          }
+                        });
+                      } else if (ownerImageController.text.length > 5 &&
+                          fileName.isNotEmpty &&
+                          optionalFileName.isNotEmpty) {
                         OwnerModal ownerForm = OwnerModal(
                           ownerImageController.text,
                           nameOwnerController.text,
@@ -457,9 +526,11 @@ class _BuildFormState extends State<BuildForm> {
                           progress = false;
                         });
                         SnackBarMessage(
-                            message: "Please submit again! Error Saving Data",
-                            color: Colors.red,
-                            loginScaffoldKey: _scaffoldKey);
+                                message:
+                                    "Please submit again! Error Saving Data",
+                                color: Colors.red,
+                                loginScaffoldKey: _scaffoldKey)
+                            .getMessage();
                       }
                     }
                   },

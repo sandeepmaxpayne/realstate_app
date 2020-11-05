@@ -328,6 +328,28 @@ class _SignUpState extends State<SignUp> {
                     final user = await _auth.createUserWithEmailAndPassword(
                         email: registerEmail.trim(),
                         password: registerPassword);
+                    try {
+                      setState(() {
+                        showSpinner = false;
+                      });
+                      await user.user.sendEmailVerification();
+                      SnackBarMessage(
+                              message: "Email Verification sent",
+                              color: Colors.green,
+                              loginScaffoldKey: _scaffoldKey)
+                          .getMessage();
+                      return user.user.uid;
+                    } catch (e) {
+                      setState(() {
+                        showSpinner = false;
+                      });
+                      print("Error occurred: ${e.message}");
+                      SnackBarMessage(
+                              message: e.message,
+                              color: Colors.red,
+                              loginScaffoldKey: _scaffoldKey)
+                          .getMessage();
+                    }
                     //store data to sheet
                     formController.submitForm(feedForm, (String response) {
                       print("response: $response");
@@ -356,7 +378,7 @@ class _SignUpState extends State<SignUp> {
                       });
                       Provider.of<ChangeEmailAddress>(context, listen: false)
                           .changeData(registerEmail.trim());
-                      Navigator.pushNamed(context, Home.id);
+                      //    Navigator.pushNamed(context, Home.id);
                     }
                   } catch (e) {
                     setState(() {

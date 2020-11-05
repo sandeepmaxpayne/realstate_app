@@ -204,9 +204,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       setState(() {
                         progress = false;
                       });
-                      Provider.of<ChangeEmailAddress>(context, listen: false)
-                          .changeData(loginEmail.trim());
-                      Navigator.pushNamed(context, Home.id);
+                      if (logUser.user.emailVerified) {
+                        Provider.of<ChangeEmailAddress>(context, listen: false)
+                            .changeData(loginEmail.trim());
+                        Navigator.pushNamed(context, Home.id);
+                      } else {
+                        SnackBarMessage(
+                                message: "Verify Your Email and then LogIn",
+                                color: Colors.red,
+                                loginScaffoldKey: _loginScaffoldKey)
+                            .getMessage();
+                      }
                     }
                   } catch (e) {
                     setState(() {
