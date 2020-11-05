@@ -14,9 +14,11 @@ import 'package:url_launcher/url_launcher.dart';
 import 'controller/buyer_controller.dart';
 import 'controller/owner_controller.dart';
 import 'controller/realtor_controller.dart';
+import 'controller/user_controller.dart';
 import 'modal/buyer_modal.dart';
 import 'modal/owner_modal.dart';
 import 'modal/realtor_modal.dart';
+import 'modal/user_modal.dart';
 
 class Home extends StatefulWidget {
   static final id = "home";
@@ -35,6 +37,8 @@ class _HomeState extends State<Home> {
   List<RealtorModal> realtorData = List<RealtorModal>();
   List<BuyerModal> buyerData = List<BuyerModal>();
   List<String> allUsersEmails = [];
+  List<UserModal> usersData = List<UserModal>();
+  List<String> loggedInUsersEmail = [];
 
   snackBarMessage(String message, Color color) {
     return _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -66,6 +70,11 @@ class _HomeState extends State<Home> {
     BuyerController().getFeedList().then((buyerData) {
       setState(() {
         this.buyerData = buyerData;
+      });
+    });
+    UserController().getFeedList().then((usersData) {
+      setState(() {
+        this.usersData = usersData;
       });
     });
   }
@@ -188,6 +197,41 @@ class _HomeState extends State<Home> {
             },
             title1: 'Buyer',
             title2: 'buyer',
+            desc: '',
+          ),
+          ChatCard(
+            onPress: () {
+              /// Check if Logged In users is not related to owner, realtor or buyer
+              for (int i = 0; i < ownerData.length - 1; i++) {
+                allUsersEmails.add(ownerData[i].email.trim());
+              }
+              for (int i = 0; i < realtorData.length - 1; i++) {
+                allUsersEmails.add(realtorData[i].email.trim());
+              }
+              for (int i = 0; i < buyerData.length - 1; i++) {
+                allUsersEmails.add(buyerData[i].email.trim());
+              }
+              for (int i = 0; i < usersData.length - 1; i++) {
+                loggedInUsersEmail.add(usersData[i].email.trim());
+              }
+              print("allusers: ${allUsersEmails.toSet().toList()}");
+              print("LoggedInUsers: ${loggedInUsersEmail.toSet().toList()}");
+
+              if (loggedInUsersEmail.contains(
+                      Provider.of<ChangeEmailAddress>(context, listen: false)
+                          .emailAddress) &&
+                  !allUsersEmails.toSet().toList().contains(
+                      Provider.of<ChangeEmailAddress>(context, listen: false)
+                          .emailAddress)) {
+                Navigator.pushNamed(context, ChatScreen.id);
+              } else {
+                return snackBarMessage(
+                    "Please open settings to chat with admin !",
+                    Colors.orangeAccent);
+              }
+            },
+            title1: 'Chat with Admin',
+            title2: 'Logged In Users Chat only (Not realtor/owner/buyer)',
             desc: '',
           ),
         ],

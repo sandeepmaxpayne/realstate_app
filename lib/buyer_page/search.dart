@@ -359,11 +359,11 @@ class _SearchState extends State<Search> {
 
     for (var i = 0; i < properties.length; i++) {
       list.add(Hero(
-          tag: properties[i].frontImage,
+          tag: "tag${properties[i].frontImage}",
           child: buildProperty(properties[i], i)));
     }
     print("list items: ${list.toSet().toList().length}");
-    return list.toSet().toList();
+    return list;
   }
 
   Widget buildProperty(Property property, int index) {
