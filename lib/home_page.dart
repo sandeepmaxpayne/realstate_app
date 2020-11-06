@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:real_estate/card_view.dart';
+import 'package:real_estate/modal/group_chat_modal.dart';
 import 'package:real_estate/registration/signIn_page.dart';
 import 'package:real_estate/registration_forms/buyer_register.dart';
 import 'package:real_estate/registration_forms/owner_register.dart';
@@ -12,6 +13,7 @@ import 'package:share/share.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'controller/buyer_controller.dart';
+import 'controller/group_chat_controller.dart';
 import 'controller/owner_controller.dart';
 import 'controller/realtor_controller.dart';
 import 'controller/user_controller.dart';
@@ -39,6 +41,7 @@ class _HomeState extends State<Home> {
   List<String> allUsersEmails = [];
   List<UserModal> usersData = List<UserModal>();
   List<String> loggedInUsersEmail = [];
+  List<GroupChatModal> groupChatLink = List<GroupChatModal>();
 
   snackBarMessage(String message, Color color) {
     return _scaffoldKey.currentState.showSnackBar(SnackBar(
@@ -122,7 +125,7 @@ class _HomeState extends State<Home> {
               title: Text('share'),
               leading: Icon(Icons.share),
               onTap: () {
-                Share.share('new app link');
+                Share.share('Join GroupEstate group: https://play.google.com/store/apps/details?id=com.appruloft.real_estate');
               },
             ),
             ListTile(
@@ -132,7 +135,7 @@ class _HomeState extends State<Home> {
                 final Uri _emailLaunchUri = Uri(
                     scheme: 'mailto',
                     path: 'admin@globaladmitcare.xyz',
-                    queryParameters: {'subject': 'Regarding Admit Hospital'});
+                    queryParameters: {'subject': 'Regarding RealEstate, Apartment'});
                 launch(_emailLaunchUri.toString());
               },
             ),
@@ -158,12 +161,34 @@ class _HomeState extends State<Home> {
               },
             ),
             ListTile(
+              title: Text('Group Chat'),
+              leading: Icon(Icons.group),
+              onTap: () async {
+                GroupChatController().getFeedList().then((groupChatLink) {
+                  setState(() {
+                    this.groupChatLink = groupChatLink;
+                    print("grouplink:${groupChatLink[0].whatsAppLink.trim()}");
+                  });
+                });
+                if (groupChatLink.isNotEmpty) {
+                  String chatLink = groupChatLink[0].whatsAppLink.trim();
+                  if (await canLaunch(chatLink)) {
+                    await launch(chatLink);
+                  } else {
+                    _showGroupChatDialog();
+                  }
+                } else {
+                  _showGroupChatDialog();
+                }
+              },
+            ),
+            ListTile(
                 title: Text('Sign Out'),
                 leading: Icon(Icons.exit_to_app),
                 onTap: () {
                   _auth.signOut();
                   Navigator.pushReplacementNamed(context, LoginScreen.id);
-                })
+                }),
           ],
         ),
       ),
@@ -237,6 +262,24 @@ class _HomeState extends State<Home> {
         ],
       )),
     );
+  }
+
+  _showGroupChatDialog() async {
+    await showDialog(
+        context: context,
+        child: _SystemPadding(
+          child: AlertDialog(
+            title: Center(child: Text('Group Chat')),
+            actions: [
+              FlatButton(
+                child: Text('close'),
+                onPressed: () => Navigator.pop(context),
+              )
+            ],
+            elevation: 5.0,
+            content: Text('No Group Chat Scheduled by Admin !'),
+          ),
+        ));
   }
 
   _showDialog() async {

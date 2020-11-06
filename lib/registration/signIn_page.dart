@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:real_estate/clipper/shape_clipper.dart';
 import 'package:real_estate/registration/forgot_password.dart';
 import 'package:real_estate/registration/signUp_page.dart';
+import 'package:real_estate/registration_forms/count_no_submit.dart';
 import 'package:real_estate/user_chat/change_email_address.dart';
 import 'package:real_estate/values/borders.dart';
 import 'package:real_estate/values/custom_button.dart';
@@ -207,6 +208,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       if (logUser.user.emailVerified) {
                         Provider.of<ChangeEmailAddress>(context, listen: false)
                             .changeData(loginEmail.trim());
+
+                        ///Reset count
+                        Provider.of<CountNoOfSubmit>(context, listen: false)
+                            .changeNoOfCount(0);
                         Navigator.pushNamed(context, Home.id);
                       } else {
                         SnackBarMessage(
