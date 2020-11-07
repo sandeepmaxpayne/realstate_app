@@ -1,12 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flappy_search_bar/flappy_search_bar.dart';
 import 'package:flappy_search_bar/search_bar_style.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:real_estate/controller/admin_add_property_controller.dart';
 import 'package:real_estate/controller/owner_controller.dart';
 import 'package:real_estate/controller/realtor_controller.dart';
 import 'package:real_estate/modal/admin_add_property_modal.dart';
 import 'package:real_estate/modal/owner_modal.dart';
 import 'package:real_estate/modal/realtor_modal.dart';
+import 'package:real_estate/user_chat/change_email_address.dart';
 import 'data.dart';
 import 'detail.dart';
 import 'filter.dart';
@@ -19,7 +22,8 @@ class Search extends StatefulWidget {
 
 class _SearchState extends State<Search> {
   // List<Property> properties = getPropertyList();
-
+  final _auth = FirebaseAuth.instance;
+  String loggedInUser;
   List<Property> properties = [];
   List<OwnerModal> ownerData = List<OwnerModal>();
   List<RealtorModal> realtorData = List<RealtorModal>();
@@ -27,7 +31,7 @@ class _SearchState extends State<Search> {
   @override
   void initState() {
     super.initState();
-
+    getCurrentUser();
     //Owner Controller
     OwnerController().getFeedList().then((ownerData) {
       setState(() {
@@ -49,6 +53,19 @@ class _SearchState extends State<Search> {
         print("admin Data: ${adminData[0].toJson()}");
       });
     });
+  }
+
+  //// Get the Current User Email
+  void getCurrentUser() {
+    try {
+      final user = _auth.currentUser.email;
+      if (user != null) {
+        loggedInUser = user;
+        print('CurrentUser email" $loggedInUser');
+      }
+    } catch (e) {
+      print(e);
+    }
   }
 
   void getRealTimePropertyList() {
@@ -370,6 +387,10 @@ class _SearchState extends State<Search> {
     return GestureDetector(
       onTap: () {
         print("property : $property");
+
+        ///Set the email with the current user before seeing the property.
+        Provider.of<ChangeEmailAddress>(context, listen: false)
+            .changeData(loggedInUser);
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => Detail(property: property)),

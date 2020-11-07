@@ -240,7 +240,8 @@ class _DetailState extends State<Detail> {
                                                         .emailAddress,
                                                     widget.property.name,
                                                     widget.property.place,
-                                                    widget.property.location);
+                                                    widget.property.location,
+                                                    widget.property.sqm);
                                             InterestedBuyerController
                                                 interestedBuyerController =
                                                 InterestedBuyerController();

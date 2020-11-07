@@ -3,9 +3,14 @@ class InterestedBuyerModal {
   String interestedPropertyName;
   String interestedPropertyPlace;
   String interestedPropertyLocation;
+  String plotSize;
 
-  InterestedBuyerModal(this.interestedBuyerEmail, this.interestedPropertyName,
-      this.interestedPropertyPlace, this.interestedPropertyLocation);
+  InterestedBuyerModal(
+      this.interestedBuyerEmail,
+      this.interestedPropertyName,
+      this.interestedPropertyPlace,
+      this.interestedPropertyLocation,
+      this.plotSize);
 
   factory InterestedBuyerModal.fromJson(dynamic json) {
     //parameters must be same as json String value from URL get
@@ -13,7 +18,8 @@ class InterestedBuyerModal {
         "${json['interestedBuyerEmail']}",
         "${json['interestedPropertyName']}",
         "${json['interestedPropertyPlace']}",
-        "${json['interestedPropertyLocation']}");
+        "${json['interestedPropertyLocation']}",
+        "${json['plotSize']}");
   }
 
   //method to get parameters
@@ -22,5 +28,6 @@ class InterestedBuyerModal {
         'interestedPropertyName': interestedPropertyName,
         'interestedPropertyPlace': interestedPropertyPlace,
         'interestedPropertyLocation': interestedPropertyLocation,
+        'plotSize': plotSize
       };
 }
