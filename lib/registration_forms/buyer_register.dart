@@ -4,9 +4,13 @@ import 'package:chips_choice/chips_choice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
 import 'package:real_estate/buyer_page/search.dart';
 import 'package:real_estate/controller/buyer_controller.dart';
 import 'package:real_estate/modal/buyer_modal.dart';
+import 'package:real_estate/registration_forms/count_no_submit.dart';
 import 'package:real_estate/values/snackbar_msg.dart';
 import 'package:real_estate/values/styles.dart';
 
@@ -105,11 +109,6 @@ class _BuildFormState extends State<BuildForm> {
   List<String> options = ['Plot', 'Apartment', 'Ind.house'];
   List<String> buyerType = ['Individual Buying', 'Group Buying'];
 
-  String fileType = '';
-  String fileName = '';
-  String operationText = '';
-  File file;
-  bool isUploaded = true;
   var selectedRange = RangeValues(500000, 2000000);
   TextEditingController startBudgetController = TextEditingController();
   TextEditingController endBudgetController = TextEditingController();
@@ -311,11 +310,20 @@ class _BuildFormState extends State<BuildForm> {
                 RaisedButton(
                   color: Theme.of(context).accentColor,
                   onPressed: () {
-                    print("option: ${buyerOptionController.text}");
-                    print("buyerType: ${buyerTypeController.text}");
-                    print(
-                        "start Budget: ${startBudgetController.text} end Budget :${endBudgetController.text}");
-                    if (widget._formKey.currentState.validate()) {
+                    ///TO Count the no of times submit. IF > 1 Then display Error Message[Already Submitted]
+                    int count =
+                        Provider.of<CountNoOfSubmit>(context, listen: false)
+                            .count;
+//                    print("option: ${buyerOptionController.text}");
+//                    print("buyerType: ${buyerTypeController.text}");
+//                    print("start Budget: ${startBudgetController.text} end Budget :${endBudgetController.text}");
+                    if (widget._formKey.currentState.validate() && count < 1) {
+                      ///increment the counter
+                      count += 1;
+
+                      ///set the count to ChangeNoOdCount
+                      Provider.of<CountNoOfSubmit>(context, listen: false)
+                          .changeNoOfCount(count);
                       setState(() {
                         progress = true;
                       });
@@ -366,9 +374,11 @@ class _BuildFormState extends State<BuildForm> {
                         progress = false;
                       });
                       SnackBarMessage(
-                          message: "Please submit again! Error Saving Data",
-                          color: Colors.red,
-                          loginScaffoldKey: _scaffoldKey);
+                              message:
+                                  "Already Submitted ! Try after next Login",
+                              color: Colors.red,
+                              loginScaffoldKey: _scaffoldKey)
+                          .getMessage();
                     }
                   },
                   child: Text(

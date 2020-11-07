@@ -122,7 +122,8 @@ class _HomeState extends State<Home> {
               title: Text('share'),
               leading: Icon(Icons.share),
               onTap: () {
-                Share.share('new app link');
+                Share.share(
+                    'Join GroupEstate group: https://play.google.com/store/apps/details?id=com.appruloft.real_estate');
               },
             ),
             ListTile(
@@ -132,7 +133,9 @@ class _HomeState extends State<Home> {
                 final Uri _emailLaunchUri = Uri(
                     scheme: 'mailto',
                     path: 'admin@globaladmitcare.xyz',
-                    queryParameters: {'subject': 'Regarding Admit Hospital'});
+                    queryParameters: {
+                      'subject': 'Regarding RealEstate, Apartment'
+                    });
                 launch(_emailLaunchUri.toString());
               },
             ),
@@ -163,7 +166,7 @@ class _HomeState extends State<Home> {
                 onTap: () {
                   _auth.signOut();
                   Navigator.pushReplacementNamed(context, LoginScreen.id);
-                })
+                }),
           ],
         ),
       ),

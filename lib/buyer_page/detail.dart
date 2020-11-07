@@ -1,6 +1,10 @@
 import 'package:chips_choice/chips_choice.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:real_estate/controller/intersrted_buyer_controller.dart';
+import 'package:real_estate/modal/interested_buyer_modal.dart';
+import 'package:real_estate/user_chat/change_email_address.dart';
 import 'package:real_estate/user_chat/chat.dart';
 
 import 'data.dart';
@@ -227,6 +231,37 @@ class _DetailState extends State<Detail> {
                                   tagChange == 1
                                       ? InkWell(
                                           onTap: () {
+                                            InterestedBuyerModal
+                                                interestedBuyerForm =
+                                                InterestedBuyerModal(
+                                                    Provider.of<ChangeEmailAddress>(
+                                                            context,
+                                                            listen: false)
+                                                        .emailAddress,
+                                                    widget.property.name,
+                                                    widget.property.place,
+                                                    widget.property.location,
+                                                    widget.property.sqm);
+                                            InterestedBuyerController
+                                                interestedBuyerController =
+                                                InterestedBuyerController();
+                                            //save the interested user to sheet
+                                            interestedBuyerController
+                                                .submitForm(interestedBuyerForm,
+                                                    (String response) {
+                                              print(
+                                                  "interested buyer response: $response");
+                                              if (response ==
+                                                  InterestedBuyerController
+                                                      .STATUS_SUCCESS) {
+                                                print(
+                                                    "Interested Buyer data saved successfully");
+                                              } else {
+                                                print(
+                                                    "Error saving interested Buyer Data");
+                                              }
+                                            });
+
                                             Navigator.pushNamed(
                                                 context, ChatScreen.id);
                                           },
